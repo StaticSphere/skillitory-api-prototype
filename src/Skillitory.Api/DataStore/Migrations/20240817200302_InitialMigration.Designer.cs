@@ -12,7 +12,7 @@ using Skillitory.Api.DataStore;
 namespace Skillitory.Api.DataStore.Migrations
 {
     [DbContext(typeof(SkillitoryDbContext))]
-    [Migration("20240817035139_InitialMigration")]
+    [Migration("20240817200302_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -228,9 +228,9 @@ namespace Skillitory.Api.DataStore.Migrations
                         .HasColumnName("name");
 
                     b.HasKey("Id")
-                        .HasName("pk_audit_log_type");
+                        .HasName("pk_otp_type");
 
-                    b.ToTable("audit_log_type", "audit");
+                    b.ToTable("otp_type", "auth");
 
                     b.HasData(
                         new
@@ -262,6 +262,35 @@ namespace Skillitory.Api.DataStore.Migrations
                         {
                             Id = 6,
                             Name = "NewUserEmailVerified"
+                        });
+                });
+
+            modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Auth.OtpType", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id")
+                        .HasName("pk_otp_type");
+
+                    b.ToTable("otp_type", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 0,
+                            Name = "Email"
+                        },
+                        new
+                        {
+                            Id = 1,
+                            Name = "TimeBased"
                         });
                 });
 
@@ -311,7 +340,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "2f462c43-6c58-460d-987f-cb3fa916d064",
+                            ConcurrencyStamp = "8e1ff08f-4338-47e2-bd75-f6eab5c33436",
                             Description = "Users in this role can read and write all Skillitory resources, including customer data.",
                             IsApplicationAdministratorRole = true,
                             Name = "Skillitory Administrator",
@@ -320,7 +349,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "858d143c-a558-4091-8576-b7a7c472faaf",
+                            ConcurrencyStamp = "50b1dcf3-be96-44be-96d7-979e5c3ec123",
                             Description = "Users in this role can read all Skillitory resources, including customer data.",
                             IsApplicationAdministratorRole = true,
                             Name = "Skillitory Viewer",
@@ -329,7 +358,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "360a8846-7622-4a3a-9715-eb8b9c41ae7f",
+                            ConcurrencyStamp = "5978502a-32d0-4b35-8d0a-6607f2e00927",
                             Description = "Users in this role can administrate the organizations that they're associated with.",
                             IsApplicationAdministratorRole = false,
                             Name = "Organization Administrator",
@@ -338,7 +367,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "dbe8834c-2b7a-4bee-b5f3-18fb2f3b1821",
+                            ConcurrencyStamp = "1d0107ef-faba-4204-a762-f4f6f193efb3",
                             Description = "Users in this role can view the details and users of the organizations that they're associated with.",
                             IsApplicationAdministratorRole = false,
                             Name = "Organization Viewer",
@@ -347,7 +376,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 5,
-                            ConcurrencyStamp = "434ed684-0986-4159-85fb-d04e76521351",
+                            ConcurrencyStamp = "ff110db0-3158-4ae3-a04c-37edae53c73c",
                             Description = "Users in this role are standard users that can manage their own profile, skills, goals, etc.",
                             IsApplicationAdministratorRole = false,
                             Name = "User",
@@ -459,6 +488,10 @@ namespace Skillitory.Api.DataStore.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("organization_id");
 
+                    b.Property<int?>("OtpTypeId")
+                        .HasColumnType("integer")
+                        .HasColumnName("otp_type_id");
+
                     b.Property<string>("PasswordHash")
                         .HasColumnType("text")
                         .HasColumnName("password_hash");
@@ -472,7 +505,8 @@ namespace Skillitory.Api.DataStore.Migrations
                         .HasColumnName("phone_number_confirmed");
 
                     b.Property<string>("RefreshToken")
-                        .HasColumnType("text")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
                         .HasColumnName("refresh_token");
 
                     b.Property<DateTimeOffset?>("RefreshTokenExpiryTime")
@@ -515,7 +549,8 @@ namespace Skillitory.Api.DataStore.Migrations
 
                     b.Property<string>("UserUniqueKey")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
                         .HasColumnName("user_unique_key");
 
                     b.HasKey("Id")
@@ -527,6 +562,9 @@ namespace Skillitory.Api.DataStore.Migrations
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
+
+                    b.HasIndex("OtpTypeId")
+                        .HasDatabaseName("ix_user_otp_type_id");
 
                     b.HasIndex("SupervisorId")
                         .HasDatabaseName("ix_user_supervisor_id");
@@ -542,9 +580,9 @@ namespace Skillitory.Api.DataStore.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "34a96799-a515-407f-a73a-c37b93acaad1",
+                            ConcurrencyStamp = "a2e45ba2-2b5f-4d74-a7ce-6999dc6594ab",
                             CreatedBy = 1,
-                            CreatedOn = new DateTimeOffset(new DateTime(2024, 8, 17, 3, 51, 39, 527, DateTimeKind.Unspecified).AddTicks(8780), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedOn = new DateTimeOffset(new DateTime(2024, 8, 17, 20, 3, 2, 242, DateTimeKind.Unspecified).AddTicks(2490), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "system_user@skillitory.com",
                             EmailConfirmed = false,
                             FirstName = "SYSTEM",
@@ -558,7 +596,7 @@ namespace Skillitory.Api.DataStore.Migrations
                             SecurityStamp = "NEVER_GOING_TO_SIGN_IN",
                             TwoFactorEnabled = false,
                             UserName = "system_user@skillitory.com",
-                            UserUniqueKey = "pc93b1erpag7zuka47ojyoz5"
+                            UserUniqueKey = "kkgj01qsln03mbik9g4ka75e"
                         });
                 });
 
@@ -654,10 +692,17 @@ namespace Skillitory.Api.DataStore.Migrations
 
             modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Auth.SkillitoryUser", b =>
                 {
+                    b.HasOne("Skillitory.Api.DataStore.Entities.Auth.OtpType", "OtpType")
+                        .WithMany()
+                        .HasForeignKey("OtpTypeId")
+                        .HasConstraintName("fk_user_otp_type_otp_type_id");
+
                     b.HasOne("Skillitory.Api.DataStore.Entities.Auth.SkillitoryUser", "Supervisor")
                         .WithMany()
                         .HasForeignKey("SupervisorId")
                         .HasConstraintName("fk_user_user_supervisor_id");
+
+                    b.Navigation("OtpType");
 
                     b.Navigation("Supervisor");
                 });

@@ -21,8 +21,20 @@ namespace Skillitory.Api.DataStore.Migrations
                 name: "auth");
 
             migrationBuilder.CreateTable(
-                name: "audit_log_type",
-                schema: "audit",
+                name: "otp_type",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false),
+                    name = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_otp_type", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "otp_type",
+                schema: "auth",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false),
@@ -30,7 +42,7 @@ namespace Skillitory.Api.DataStore.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_audit_log_type", x => x.id);
+                    table.PrimaryKey("pk_otp_type", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -58,7 +70,7 @@ namespace Skillitory.Api.DataStore.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    user_unique_key = table.Column<string>(type: "text", nullable: false),
+                    user_unique_key = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     organization_id = table.Column<int>(type: "integer", nullable: true),
                     department_id = table.Column<int>(type: "integer", nullable: true),
                     title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
@@ -73,7 +85,8 @@ namespace Skillitory.Api.DataStore.Migrations
                     is_sign_in_allowed = table.Column<bool>(type: "boolean", nullable: false),
                     is_system_user = table.Column<bool>(type: "boolean", nullable: false),
                     terminated_on = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    refresh_token = table.Column<string>(type: "text", nullable: true),
+                    otp_type_id = table.Column<int>(type: "integer", nullable: true),
+                    refresh_token = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     refresh_token_expiry_time = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     created_by = table.Column<int>(type: "integer", nullable: false),
                     created_on = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -97,6 +110,11 @@ namespace Skillitory.Api.DataStore.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_user", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_user_otp_type_otp_type_id",
+                        column: x => x.otp_type_id,
+                        principalTable: "otp_type",
+                        principalColumn: "id");
                     table.ForeignKey(
                         name: "fk_user_user_supervisor_id",
                         column: x => x.supervisor_id,
@@ -152,8 +170,8 @@ namespace Skillitory.Api.DataStore.Migrations
                     table.ForeignKey(
                         name: "fk_audit_log_audit_log_types_audit_log_type_id",
                         column: x => x.audit_log_type_id,
-                        principalSchema: "audit",
-                        principalTable: "audit_log_type",
+                        principalSchema: "auth",
+                        principalTable: "otp_type",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -275,8 +293,17 @@ namespace Skillitory.Api.DataStore.Migrations
                 });
 
             migrationBuilder.InsertData(
-                schema: "audit",
-                table: "audit_log_type",
+                table: "otp_type",
+                columns: new[] { "id", "name" },
+                values: new object[,]
+                {
+                    { 0, "Email" },
+                    { 1, "TimeBased" }
+                });
+
+            migrationBuilder.InsertData(
+                schema: "auth",
+                table: "otp_type",
                 columns: new[] { "id", "name" },
                 values: new object[,]
                 {
@@ -294,18 +321,18 @@ namespace Skillitory.Api.DataStore.Migrations
                 columns: new[] { "id", "concurrency_stamp", "description", "is_application_administrator_role", "name", "normalized_name" },
                 values: new object[,]
                 {
-                    { 1, "2f462c43-6c58-460d-987f-cb3fa916d064", "Users in this role can read and write all Skillitory resources, including customer data.", true, "Skillitory Administrator", "SKILLITORY ADMINISTRATOR" },
-                    { 2, "858d143c-a558-4091-8576-b7a7c472faaf", "Users in this role can read all Skillitory resources, including customer data.", true, "Skillitory Viewer", "SKILLITORY VIEWER" },
-                    { 3, "360a8846-7622-4a3a-9715-eb8b9c41ae7f", "Users in this role can administrate the organizations that they're associated with.", false, "Organization Administrator", "ORGANIZATION ADMINISTRATOR" },
-                    { 4, "dbe8834c-2b7a-4bee-b5f3-18fb2f3b1821", "Users in this role can view the details and users of the organizations that they're associated with.", false, "Organization Viewer", "ORGANIZATION VIEWER" },
-                    { 5, "434ed684-0986-4159-85fb-d04e76521351", "Users in this role are standard users that can manage their own profile, skills, goals, etc.", false, "User", "USER" }
+                    { 1, "8e1ff08f-4338-47e2-bd75-f6eab5c33436", "Users in this role can read and write all Skillitory resources, including customer data.", true, "Skillitory Administrator", "SKILLITORY ADMINISTRATOR" },
+                    { 2, "50b1dcf3-be96-44be-96d7-979e5c3ec123", "Users in this role can read all Skillitory resources, including customer data.", true, "Skillitory Viewer", "SKILLITORY VIEWER" },
+                    { 3, "5978502a-32d0-4b35-8d0a-6607f2e00927", "Users in this role can administrate the organizations that they're associated with.", false, "Organization Administrator", "ORGANIZATION ADMINISTRATOR" },
+                    { 4, "1d0107ef-faba-4204-a762-f4f6f193efb3", "Users in this role can view the details and users of the organizations that they're associated with.", false, "Organization Viewer", "ORGANIZATION VIEWER" },
+                    { 5, "ff110db0-3158-4ae3-a04c-37edae53c73c", "Users in this role are standard users that can manage their own profile, skills, goals, etc.", false, "User", "USER" }
                 });
 
             migrationBuilder.InsertData(
                 schema: "auth",
                 table: "user",
-                columns: new[] { "id", "access_failed_count", "avatar_stored_file_id", "biography", "birth_date", "concurrency_stamp", "created_by", "created_on", "department_id", "education", "email", "email_confirmed", "external_id", "first_name", "is_sign_in_allowed", "is_system_user", "last_name", "lockout_enabled", "lockout_end", "normalized_email", "normalized_user_name", "organization_id", "password_hash", "phone_number", "phone_number_confirmed", "refresh_token", "refresh_token_expiry_time", "security_stamp", "supervisor_id", "terminated_on", "title", "two_factor_enabled", "updated_by", "updated_on", "user_name", "user_unique_key" },
-                values: new object[] { 1, 0, null, null, null, "34a96799-a515-407f-a73a-c37b93acaad1", 1, new DateTimeOffset(new DateTime(2024, 8, 17, 3, 51, 39, 527, DateTimeKind.Unspecified).AddTicks(8780), new TimeSpan(0, 0, 0, 0, 0)), null, null, "system_user@skillitory.com", false, null, "SYSTEM", false, true, "USER", false, null, "SYSTEM_USER@SKILLITORY.COM", "SYSTEM_USER@SKILLITORY.COM", null, null, null, false, null, null, "NEVER_GOING_TO_SIGN_IN", null, null, null, false, null, null, "system_user@skillitory.com", "pc93b1erpag7zuka47ojyoz5" });
+                columns: new[] { "id", "access_failed_count", "avatar_stored_file_id", "biography", "birth_date", "concurrency_stamp", "created_by", "created_on", "department_id", "education", "email", "email_confirmed", "external_id", "first_name", "is_sign_in_allowed", "is_system_user", "last_name", "lockout_enabled", "lockout_end", "normalized_email", "normalized_user_name", "organization_id", "otp_type_id", "password_hash", "phone_number", "phone_number_confirmed", "refresh_token", "refresh_token_expiry_time", "security_stamp", "supervisor_id", "terminated_on", "title", "two_factor_enabled", "updated_by", "updated_on", "user_name", "user_unique_key" },
+                values: new object[] { 1, 0, null, null, null, "a2e45ba2-2b5f-4d74-a7ce-6999dc6594ab", 1, new DateTimeOffset(new DateTime(2024, 8, 17, 20, 3, 2, 242, DateTimeKind.Unspecified).AddTicks(2490), new TimeSpan(0, 0, 0, 0, 0)), null, null, "system_user@skillitory.com", false, null, "SYSTEM", false, true, "USER", false, null, "SYSTEM_USER@SKILLITORY.COM", "SYSTEM_USER@SKILLITORY.COM", null, null, null, null, false, null, null, "NEVER_GOING_TO_SIGN_IN", null, null, null, false, null, null, "system_user@skillitory.com", "kkgj01qsln03mbik9g4ka75e" });
 
             migrationBuilder.CreateIndex(
                 name: "ix_audit_log_audit_log_type_id",
@@ -343,6 +370,12 @@ namespace Skillitory.Api.DataStore.Migrations
                 schema: "auth",
                 table: "user",
                 column: "normalized_email");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_user_otp_type_id",
+                schema: "auth",
+                table: "user",
+                column: "otp_type_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_user_supervisor_id",
@@ -423,8 +456,11 @@ namespace Skillitory.Api.DataStore.Migrations
                 schema: "auth");
 
             migrationBuilder.DropTable(
-                name: "audit_log_type",
-                schema: "audit");
+                name: "otp_type",
+                schema: "auth");
+
+            migrationBuilder.DropTable(
+                name: "otp_type");
         }
     }
 }

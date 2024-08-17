@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Skillitory.Api.DataStore.Common;
+using Skillitory.Api.DataStore.Common.Enumerations;
 
 namespace Skillitory.Api.DataStore.Entities.Auth;
 
@@ -20,13 +21,15 @@ public class SkillitoryUser : IdentityUser<int>, IAuditableEntity
     public bool IsSignInAllowed { get; set; }
     public bool IsSystemUser { get; set; }
     public DateTimeOffset? TerminatedOn { get; set; }
+    public OtpTypeEnum? OtpTypeId { get; set; }
     public string? RefreshToken { get; set; }
     public DateTimeOffset? RefreshTokenExpiryTime { get; set; }
 
-    // public Organization? Organization { get; set; }
-    // public Department? Department { get; set; }
-    public SkillitoryUser? Supervisor { get; set; }
-    //public StoredFile? AvatarStoredFile { get; set; }
+    public OtpType? OtpType { get; set; }
+    // public Organization? Organization { get; set; } = null!;
+    // public Department? Department { get; set; } = null!;
+    public SkillitoryUser? Supervisor { get; set; } = null!;
+    //public StoredFile? AvatarStoredFile { get; set; } = null!;
     public int CreatedBy { get; set; }
     public DateTimeOffset CreatedOn { get; set; }
     public int? UpdatedBy { get; set; }

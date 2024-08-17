@@ -125,6 +125,11 @@ public static class ModelBuilderExtensions
         //     }
         // );
 
+        builder.Entity<OtpType>().HasData(
+            Enum.GetValues<OtpTypeEnum>()
+                .Select(x => new OtpType { Id = x, Name = x.ToString() })
+                .ToArray());
+
         builder.Entity<AuditLogType>().HasData(
             Enum.GetValues<AuditLogTypeEnum>()
                 .Select(x => new AuditLogType { Id = x, Name = x.ToString() })

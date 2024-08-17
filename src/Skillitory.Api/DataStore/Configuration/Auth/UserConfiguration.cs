@@ -14,6 +14,9 @@ public class UserConfiguration : IEntityTypeConfiguration<SkillitoryUser>
         builder.HasIndex(t => t.UserUniqueKey)
             .IsUnique();
 
+        builder.Property(t => t.UserUniqueKey)
+            .HasMaxLength(50);
+
         builder.Property(x => x.Title)
             .HasMaxLength(100);
 
@@ -33,6 +36,13 @@ public class UserConfiguration : IEntityTypeConfiguration<SkillitoryUser>
 
         builder.Property(t => t.ExternalId)
             .HasMaxLength(50);
+
+        builder.Property(t => t.RefreshToken)
+            .HasMaxLength(100);
+
+        builder.HasOne(x => x.OtpType)
+            .WithMany()
+            .HasForeignKey(x => x.OtpTypeId);
 
         // builder.HasOne(x => x.Organization)
         //     .WithMany(x => x.Users)

@@ -1,0 +1,23 @@
+meta {
+  name: Sign In OTP
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{protocol}}://{{apibase}}:{{port}}/v1/auth/sign-in-otp
+  body: json
+  auth: none
+}
+
+params:query {
+  ~useCookie: true
+}
+
+body:json {
+  {
+    "email": "{{adminEmail}}",
+    "otp": "",
+    "otpType": 1
+  }
+}

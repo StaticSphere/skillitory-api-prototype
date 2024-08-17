@@ -19,10 +19,11 @@ public class SignInEndpoint : AuthTokensEndpoint<SignInCommand, Results<Unauthor
         UserManager<SkillitoryUser> userManager,
         IHttpContextAccessor httpContextAccessor,
         ITokenService tokenService,
+        IDateTimeService dateTimeService,
         IEmailService emailService,
         IAuditService auditService,
         IOptions<SecurityConfiguration> securityConfiguration)
-    : base(userManager, httpContextAccessor, tokenService, securityConfiguration.Value)
+    : base(userManager, httpContextAccessor, tokenService, dateTimeService, securityConfiguration.Value)
     {
         _userManager = userManager;
         _emailService = emailService;

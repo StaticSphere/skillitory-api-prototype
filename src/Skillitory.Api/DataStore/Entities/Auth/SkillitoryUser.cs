@@ -22,16 +22,16 @@ public class SkillitoryUser : IdentityUser<int>, IAuditableEntity
     public bool IsSystemUser { get; set; }
     public DateTimeOffset? TerminatedOn { get; set; }
     public OtpTypeEnum? OtpTypeId { get; set; }
-    public string? RefreshToken { get; set; }
-    public DateTimeOffset? RefreshTokenExpiryTime { get; set; }
 
     public OtpType? OtpType { get; set; }
+
+    public ICollection<UserRefreshToken> RefreshTokens { get; set; } = new List<UserRefreshToken>();
     // public Organization? Organization { get; set; } = null!;
     // public Department? Department { get; set; } = null!;
     public SkillitoryUser? Supervisor { get; set; } = null!;
     //public StoredFile? AvatarStoredFile { get; set; } = null!;
     public int CreatedBy { get; set; }
-    public DateTimeOffset CreatedOn { get; set; }
+    public DateTimeOffset CreatedDateTime { get; set; }
     public int? UpdatedBy { get; set; }
-    public DateTimeOffset? UpdatedOn { get; set; }
+    public DateTimeOffset? UpdatedDateTime { get; set; }
 }

@@ -13,17 +13,20 @@ public abstract class AuthTokensEndpoint<TRequest, TResponse> : Endpoint<TReques
     private readonly UserManager<SkillitoryUser> _userManager;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ITokenService _tokenService;
+    private readonly IDateTimeService _dateTimeService;
     private readonly SecurityConfiguration _securityConfiguration;
 
     protected AuthTokensEndpoint(
         UserManager<SkillitoryUser> userManager,
         IHttpContextAccessor httpContextAccessor,
         ITokenService tokenService,
+        IDateTimeService dateTimeService,
         SecurityConfiguration securityConfiguration)
     {
         _userManager = userManager;
         _httpContextAccessor = httpContextAccessor;
         _tokenService = tokenService;
+        _dateTimeService = dateTimeService;
         _securityConfiguration = securityConfiguration;
     }
 
@@ -39,9 +42,14 @@ public abstract class AuthTokensEndpoint<TRequest, TResponse> : Endpoint<TReques
         claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         var tokens = _tokenService.GenerateAuthTokens(claims);
+        var userRefreshToken = new UserRefreshToken
+        {
+            Token = tokens.RefreshToken,
+            ExpirationDateTime = tokens.RefreshTokenExpiration,
+            CreatedDateTime = _dateTimeService.UtcNow
+        };
+        user.RefreshTokens.Add(userRefreshToken);
 
-        user.RefreshToken = tokens.RefreshToken;
-        user.RefreshTokenExpiryTime = tokens.RefreshTokenExpiration;
         await _userManager.UpdateAsync(user);
 
         var response = new AuthTokensResponse

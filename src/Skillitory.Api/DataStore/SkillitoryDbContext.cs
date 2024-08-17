@@ -41,12 +41,12 @@ public class SkillitoryDbContext : IdentityDbContext<SkillitoryUser, SkillitoryR
             if (entity.State == EntityState.Added)
             {
                 entity.Entity.CreatedBy =  userId;
-                entity.Entity.CreatedOn = _dateTimeService.UtcNow;
+                entity.Entity.CreatedDateTime = _dateTimeService.UtcNow;
             }
             else if (_principalService.IsAuthenticated)
             {
                 entity.Entity.UpdatedBy = userId;
-                entity.Entity.UpdatedOn = _dateTimeService.UtcNow;
+                entity.Entity.UpdatedDateTime = _dateTimeService.UtcNow;
             }
         }
 

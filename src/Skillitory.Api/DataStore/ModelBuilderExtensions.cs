@@ -26,7 +26,7 @@ public static class ModelBuilderExtensions
                 IsSignInAllowed = false,
                 IsSystemUser = true,
                 CreatedBy = 1,
-                CreatedOn = DateTimeOffset.UtcNow,
+                CreatedDateTime = DateTimeOffset.UtcNow,
                 EmailConfirmed = false,
                 PhoneNumberConfirmed = false,
                 TwoFactorEnabled = false,

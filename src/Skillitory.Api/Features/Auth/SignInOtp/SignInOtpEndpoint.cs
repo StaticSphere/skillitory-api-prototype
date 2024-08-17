@@ -19,8 +19,9 @@ public class SignInOtpEndpoint : AuthTokensEndpoint<SignInOtpCommand, Results<Un
         IHttpContextAccessor httpContextAccessor,
         ITokenService tokenService,
         IAuditService auditService,
+        IDateTimeService dateTimeService,
         IOptions<SecurityConfiguration> securityConfiguration)
-        : base(userManager, httpContextAccessor, tokenService, securityConfiguration.Value)
+        : base(userManager, httpContextAccessor, tokenService, dateTimeService, securityConfiguration.Value)
     {
         _userManager = userManager;
         _auditService = auditService;

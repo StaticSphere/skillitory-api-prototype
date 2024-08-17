@@ -37,9 +37,6 @@ public class UserConfiguration : IEntityTypeConfiguration<SkillitoryUser>
         builder.Property(t => t.ExternalId)
             .HasMaxLength(50);
 
-        builder.Property(t => t.RefreshToken)
-            .HasMaxLength(100);
-
         builder.HasOne(x => x.OtpType)
             .WithMany()
             .HasForeignKey(x => x.OtpTypeId);

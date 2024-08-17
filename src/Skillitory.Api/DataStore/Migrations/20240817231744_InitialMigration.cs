@@ -86,12 +86,10 @@ namespace Skillitory.Api.DataStore.Migrations
                     is_system_user = table.Column<bool>(type: "boolean", nullable: false),
                     terminated_on = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     otp_type_id = table.Column<int>(type: "integer", nullable: true),
-                    refresh_token = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    refresh_token_expiry_time = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     created_by = table.Column<int>(type: "integer", nullable: false),
-                    created_on = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    created_date_time = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     updated_by = table.Column<int>(type: "integer", nullable: true),
-                    updated_on = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    updated_date_time = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     normalized_user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -222,6 +220,28 @@ namespace Skillitory.Api.DataStore.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "user_refresh_token",
+                schema: "auth",
+                columns: table => new
+                {
+                    user_id = table.Column<int>(type: "integer", nullable: false),
+                    token = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    created_date_time = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    expiration_date_time = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_user_refresh_token", x => new { x.user_id, x.token });
+                    table.ForeignKey(
+                        name: "fk_user_refresh_token_user_user_id",
+                        column: x => x.user_id,
+                        principalSchema: "auth",
+                        principalTable: "user",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "user_role",
                 schema: "auth",
                 columns: table => new
@@ -321,18 +341,18 @@ namespace Skillitory.Api.DataStore.Migrations
                 columns: new[] { "id", "concurrency_stamp", "description", "is_application_administrator_role", "name", "normalized_name" },
                 values: new object[,]
                 {
-                    { 1, "ec4688ef-8c8c-4f52-9242-2c18d15c691e", "Users in this role can read and write all Skillitory resources, including customer data.", true, "Skillitory Administrator", "SKILLITORY ADMINISTRATOR" },
-                    { 2, "30f7c420-a68a-4bac-998a-d782b3f6a76b", "Users in this role can read all Skillitory resources, including customer data.", true, "Skillitory Viewer", "SKILLITORY VIEWER" },
-                    { 3, "f593af11-9315-4e66-aa3f-aaf962929c8d", "Users in this role can administrate the organizations that they're associated with.", false, "Organization Administrator", "ORGANIZATION ADMINISTRATOR" },
-                    { 4, "d6c833e8-bc9a-41a7-86fe-6162b7b5f0c2", "Users in this role can view the details and users of the organizations that they're associated with.", false, "Organization Viewer", "ORGANIZATION VIEWER" },
-                    { 5, "5224c3f4-7f18-4a04-b368-f533dd852782", "Users in this role are standard users that can manage their own profile, skills, goals, etc.", false, "User", "USER" }
+                    { 1, "925dcd54-5e8f-489d-b3e7-6aed2695eaab", "Users in this role can read and write all Skillitory resources, including customer data.", true, "Skillitory Administrator", "SKILLITORY ADMINISTRATOR" },
+                    { 2, "085d4179-2773-403f-aa44-20741d3e846d", "Users in this role can read all Skillitory resources, including customer data.", true, "Skillitory Viewer", "SKILLITORY VIEWER" },
+                    { 3, "c83a5237-001c-493c-b996-ced3c952add8", "Users in this role can administrate the organizations that they're associated with.", false, "Organization Administrator", "ORGANIZATION ADMINISTRATOR" },
+                    { 4, "f1066bfd-b10b-452e-9936-109aba0f2c06", "Users in this role can view the details and users of the organizations that they're associated with.", false, "Organization Viewer", "ORGANIZATION VIEWER" },
+                    { 5, "4a8f525a-2e78-445b-8feb-4e13c73c9339", "Users in this role are standard users that can manage their own profile, skills, goals, etc.", false, "User", "USER" }
                 });
 
             migrationBuilder.InsertData(
                 schema: "auth",
                 table: "user",
-                columns: new[] { "id", "access_failed_count", "avatar_stored_file_id", "biography", "birth_date", "concurrency_stamp", "created_by", "created_on", "department_id", "education", "email", "email_confirmed", "external_id", "first_name", "is_sign_in_allowed", "is_system_user", "last_name", "lockout_enabled", "lockout_end", "normalized_email", "normalized_user_name", "organization_id", "otp_type_id", "password_hash", "phone_number", "phone_number_confirmed", "refresh_token", "refresh_token_expiry_time", "security_stamp", "supervisor_id", "terminated_on", "title", "two_factor_enabled", "updated_by", "updated_on", "user_name", "user_unique_key" },
-                values: new object[] { 1, 0, null, null, null, "5ee6e591-17cf-4937-b76d-d6f73416e4ad", 1, new DateTimeOffset(new DateTime(2024, 8, 17, 20, 41, 22, 50, DateTimeKind.Unspecified).AddTicks(7910), new TimeSpan(0, 0, 0, 0, 0)), null, null, "system_user@skillitory.com", false, null, "SYSTEM", false, true, "USER", false, null, "SYSTEM_USER@SKILLITORY.COM", "SYSTEM_USER@SKILLITORY.COM", null, null, null, null, false, null, null, "NEVER_GOING_TO_SIGN_IN", null, null, null, false, null, null, "system_user@skillitory.com", "yb7fqpc4a05t3j226lfuwuw6" });
+                columns: new[] { "id", "access_failed_count", "avatar_stored_file_id", "biography", "birth_date", "concurrency_stamp", "created_by", "created_date_time", "department_id", "education", "email", "email_confirmed", "external_id", "first_name", "is_sign_in_allowed", "is_system_user", "last_name", "lockout_enabled", "lockout_end", "normalized_email", "normalized_user_name", "organization_id", "otp_type_id", "password_hash", "phone_number", "phone_number_confirmed", "security_stamp", "supervisor_id", "terminated_on", "title", "two_factor_enabled", "updated_by", "updated_date_time", "user_name", "user_unique_key" },
+                values: new object[] { 1, 0, null, null, null, "361f7a9a-c25c-4935-b47b-3ae7c8d96987", 1, new DateTimeOffset(new DateTime(2024, 8, 17, 23, 17, 44, 770, DateTimeKind.Unspecified).AddTicks(1170), new TimeSpan(0, 0, 0, 0, 0)), null, null, "system_user@skillitory.com", false, null, "SYSTEM", false, true, "USER", false, null, "SYSTEM_USER@SKILLITORY.COM", "SYSTEM_USER@SKILLITORY.COM", null, null, null, null, false, "NEVER_GOING_TO_SIGN_IN", null, null, null, false, null, null, "system_user@skillitory.com", "h8tgyft2wjdbbhqv9gdu1wpl" });
 
             migrationBuilder.CreateIndex(
                 name: "ix_audit_log_audit_log_type_id",
@@ -433,6 +453,10 @@ namespace Skillitory.Api.DataStore.Migrations
 
             migrationBuilder.DropTable(
                 name: "user_login",
+                schema: "auth");
+
+            migrationBuilder.DropTable(
+                name: "user_refresh_token",
                 schema: "auth");
 
             migrationBuilder.DropTable(

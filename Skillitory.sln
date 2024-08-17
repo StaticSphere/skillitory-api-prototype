@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AAE303EB-FF42-450A-973A-EB053F2E93AC}"
+	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		Dockerfile = Dockerfile
+		Notes.txt = Notes.txt
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skillitory.Api", "src\Skillitory.Api\Skillitory.Api.csproj", "{20A918A4-0B3F-4818-9868-D499B7C5892C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F1B10924-E782-4F05-9870-2761871120DA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{20A918A4-0B3F-4818-9868-D499B7C5892C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20A918A4-0B3F-4818-9868-D499B7C5892C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20A918A4-0B3F-4818-9868-D499B7C5892C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20A918A4-0B3F-4818-9868-D499B7C5892C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{20A918A4-0B3F-4818-9868-D499B7C5892C} = {F1B10924-E782-4F05-9870-2761871120DA}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "Skillitory",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

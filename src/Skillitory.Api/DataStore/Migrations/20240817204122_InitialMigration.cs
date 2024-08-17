@@ -297,8 +297,8 @@ namespace Skillitory.Api.DataStore.Migrations
                 columns: new[] { "id", "name" },
                 values: new object[,]
                 {
-                    { 0, "Email" },
-                    { 1, "TimeBased" }
+                    { 1, "Email" },
+                    { 2, "TimeBased" }
                 });
 
             migrationBuilder.InsertData(
@@ -321,18 +321,18 @@ namespace Skillitory.Api.DataStore.Migrations
                 columns: new[] { "id", "concurrency_stamp", "description", "is_application_administrator_role", "name", "normalized_name" },
                 values: new object[,]
                 {
-                    { 1, "8e1ff08f-4338-47e2-bd75-f6eab5c33436", "Users in this role can read and write all Skillitory resources, including customer data.", true, "Skillitory Administrator", "SKILLITORY ADMINISTRATOR" },
-                    { 2, "50b1dcf3-be96-44be-96d7-979e5c3ec123", "Users in this role can read all Skillitory resources, including customer data.", true, "Skillitory Viewer", "SKILLITORY VIEWER" },
-                    { 3, "5978502a-32d0-4b35-8d0a-6607f2e00927", "Users in this role can administrate the organizations that they're associated with.", false, "Organization Administrator", "ORGANIZATION ADMINISTRATOR" },
-                    { 4, "1d0107ef-faba-4204-a762-f4f6f193efb3", "Users in this role can view the details and users of the organizations that they're associated with.", false, "Organization Viewer", "ORGANIZATION VIEWER" },
-                    { 5, "ff110db0-3158-4ae3-a04c-37edae53c73c", "Users in this role are standard users that can manage their own profile, skills, goals, etc.", false, "User", "USER" }
+                    { 1, "ec4688ef-8c8c-4f52-9242-2c18d15c691e", "Users in this role can read and write all Skillitory resources, including customer data.", true, "Skillitory Administrator", "SKILLITORY ADMINISTRATOR" },
+                    { 2, "30f7c420-a68a-4bac-998a-d782b3f6a76b", "Users in this role can read all Skillitory resources, including customer data.", true, "Skillitory Viewer", "SKILLITORY VIEWER" },
+                    { 3, "f593af11-9315-4e66-aa3f-aaf962929c8d", "Users in this role can administrate the organizations that they're associated with.", false, "Organization Administrator", "ORGANIZATION ADMINISTRATOR" },
+                    { 4, "d6c833e8-bc9a-41a7-86fe-6162b7b5f0c2", "Users in this role can view the details and users of the organizations that they're associated with.", false, "Organization Viewer", "ORGANIZATION VIEWER" },
+                    { 5, "5224c3f4-7f18-4a04-b368-f533dd852782", "Users in this role are standard users that can manage their own profile, skills, goals, etc.", false, "User", "USER" }
                 });
 
             migrationBuilder.InsertData(
                 schema: "auth",
                 table: "user",
                 columns: new[] { "id", "access_failed_count", "avatar_stored_file_id", "biography", "birth_date", "concurrency_stamp", "created_by", "created_on", "department_id", "education", "email", "email_confirmed", "external_id", "first_name", "is_sign_in_allowed", "is_system_user", "last_name", "lockout_enabled", "lockout_end", "normalized_email", "normalized_user_name", "organization_id", "otp_type_id", "password_hash", "phone_number", "phone_number_confirmed", "refresh_token", "refresh_token_expiry_time", "security_stamp", "supervisor_id", "terminated_on", "title", "two_factor_enabled", "updated_by", "updated_on", "user_name", "user_unique_key" },
-                values: new object[] { 1, 0, null, null, null, "a2e45ba2-2b5f-4d74-a7ce-6999dc6594ab", 1, new DateTimeOffset(new DateTime(2024, 8, 17, 20, 3, 2, 242, DateTimeKind.Unspecified).AddTicks(2490), new TimeSpan(0, 0, 0, 0, 0)), null, null, "system_user@skillitory.com", false, null, "SYSTEM", false, true, "USER", false, null, "SYSTEM_USER@SKILLITORY.COM", "SYSTEM_USER@SKILLITORY.COM", null, null, null, null, false, null, null, "NEVER_GOING_TO_SIGN_IN", null, null, null, false, null, null, "system_user@skillitory.com", "kkgj01qsln03mbik9g4ka75e" });
+                values: new object[] { 1, 0, null, null, null, "5ee6e591-17cf-4937-b76d-d6f73416e4ad", 1, new DateTimeOffset(new DateTime(2024, 8, 17, 20, 41, 22, 50, DateTimeKind.Unspecified).AddTicks(7910), new TimeSpan(0, 0, 0, 0, 0)), null, null, "system_user@skillitory.com", false, null, "SYSTEM", false, true, "USER", false, null, "SYSTEM_USER@SKILLITORY.COM", "SYSTEM_USER@SKILLITORY.COM", null, null, null, null, false, null, null, "NEVER_GOING_TO_SIGN_IN", null, null, null, false, null, null, "system_user@skillitory.com", "yb7fqpc4a05t3j226lfuwuw6" });
 
             migrationBuilder.CreateIndex(
                 name: "ix_audit_log_audit_log_type_id",

@@ -25,6 +25,12 @@ public class EmailService : IEmailService
             new { callbackUrl }, cancellationToken);
     }
 
+    public async Task SendSignInOtpEmailAsync(string email, string otp, CancellationToken cancellationToken = default)
+    {
+        await SendEmailInternalAsync(email, "Skillitory - Sign In One Time Password", "SignInOtp", new { otp },
+            cancellationToken);
+    }
+
     internal string UrlRoot =>
         _configuration["WebAppUrl"]!.Trim('/', '\\') + "/";
 

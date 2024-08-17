@@ -9,20 +9,23 @@ using Skillitory.Api.Services.Interfaces;
 
 namespace Skillitory.Api.Features.Auth.SignIn;
 
-public class SignInEndpoint : AuthTokensEndpoint<SignInCommand, Results<UnauthorizedHttpResult, Ok, Ok<AuthTokensResponse>>>
+public class SignInEndpoint : AuthTokensEndpoint<SignInCommand, Results<UnauthorizedHttpResult, Ok, Ok<AuthTokensResponse>, Ok<string>>>
 {
     private readonly UserManager<SkillitoryUser> _userManager;
+    private readonly IEmailService _emailService;
     private readonly IAuditService _auditService;
 
     public SignInEndpoint(
         UserManager<SkillitoryUser> userManager,
         IHttpContextAccessor httpContextAccessor,
         ITokenService tokenService,
+        IEmailService emailService,
         IAuditService auditService,
         IOptions<SecurityConfiguration> securityConfiguration)
     : base(userManager, httpContextAccessor, tokenService, securityConfiguration.Value)
     {
         _userManager = userManager;
+        _emailService = emailService;
         _auditService = auditService;
     }
 
@@ -32,7 +35,7 @@ public class SignInEndpoint : AuthTokensEndpoint<SignInCommand, Results<Unauthor
         AllowAnonymous();
     }
 
-    public override async Task<Results<UnauthorizedHttpResult, Ok, Ok<AuthTokensResponse>>> ExecuteAsync(SignInCommand req, CancellationToken ct)
+    public override async Task<Results<UnauthorizedHttpResult, Ok, Ok<AuthTokensResponse>, Ok<string>>> ExecuteAsync(SignInCommand req, CancellationToken ct)
     {
         var user = await _userManager.FindByEmailAsync(req.Email);
         if (user is null || !user.IsSignInAllowed || user.TerminatedOn.HasValue)
@@ -43,6 +46,13 @@ public class SignInEndpoint : AuthTokensEndpoint<SignInCommand, Results<Unauthor
 
         if (user.TwoFactorEnabled)
         {
+            if (user.OtpTypeId == OtpTypeEnum.Email)
+            {
+                var otp = await _userManager.GenerateTwoFactorTokenAsync(user, TokenOptions.DefaultEmailProvider);
+                await _emailService.SendSignInOtpEmailAsync(user.Email!, otp, ct);
+            }
+
+            return TypedResults.Ok(user.OtpTypeId.ToString());
         }
 
         var authTokenResponse = await GenerateAuthTokensAsync(user, req.UseCookie, ct);

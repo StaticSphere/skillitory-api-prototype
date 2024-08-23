@@ -68,27 +68,6 @@ public static partial class ApiServicesBootstrap
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true
                 };
-
-                // x.Events = new JwtBearerEvents
-                // {
-                //     OnMessageReceived = context =>
-                //     {
-                //         if (!context.Request.Cookies.TryGetValue(securitySettings.AccessCookieName, out var authCookie))
-                //             return Task.CompletedTask;
-                //
-                //         try
-                //         {
-                //             var tokenData = JsonSerializer.Deserialize<TokenData>(authCookie);
-                //             context.Token = tokenData!.AccessToken;
-                //         }
-                //         catch (JsonException)
-                //         {
-                //             // Ignore; just assume that the caller is not authenticated
-                //         }
-                //
-                //         return Task.CompletedTask;
-                //     }
-                // };
             });
 
         services.AddAuthorization();

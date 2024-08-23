@@ -1,32 +1,30 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
 using Skillitory.Api.DataStore.Common.Enumerations;
 using Skillitory.Api.DataStore.Entities.Auth;
 using Skillitory.Api.Features.Auth.Common;
-using Skillitory.Api.Models.Configuration;
 using Skillitory.Api.Services.Interfaces;
 
 namespace Skillitory.Api.Features.Auth.SignIn;
 
-public class SignInEndpoint : AuthTokensEndpoint<SignInCommand, Results<UnauthorizedHttpResult, Ok, Ok<AuthTokensResponse>, Ok<int>>>
+public class SignInEndpoint : AuthTokensEndpoint<SignInCommand, Results<UnauthorizedHttpResult, Ok<AuthTokensResponse>, Ok<int>>>
 {
     private readonly UserManager<SkillitoryUser> _userManager;
     private readonly IEmailService _emailService;
+    private readonly IDateTimeService _dateTimeService;
     private readonly IAuditService _auditService;
 
     public SignInEndpoint(
         UserManager<SkillitoryUser> userManager,
-        IHttpContextAccessor httpContextAccessor,
         ITokenService tokenService,
         IDateTimeService dateTimeService,
         IEmailService emailService,
-        IAuditService auditService,
-        IOptions<SecurityConfiguration> securityConfiguration)
-    : base(userManager, httpContextAccessor, tokenService, dateTimeService, securityConfiguration.Value)
+        IAuditService auditService)
+    : base(userManager, tokenService)
     {
         _userManager = userManager;
         _emailService = emailService;
+        _dateTimeService = dateTimeService;
         _auditService = auditService;
     }
 
@@ -36,7 +34,7 @@ public class SignInEndpoint : AuthTokensEndpoint<SignInCommand, Results<Unauthor
         AllowAnonymous();
     }
 
-    public override async Task<Results<UnauthorizedHttpResult, Ok, Ok<AuthTokensResponse>, Ok<int>>> ExecuteAsync(SignInCommand req, CancellationToken ct)
+    public override async Task<Results<UnauthorizedHttpResult, Ok<AuthTokensResponse>, Ok<int>>> ExecuteAsync(SignInCommand req, CancellationToken ct)
     {
         var user = await _userManager.FindByEmailAsync(req.Email);
         if (user is null || !user.IsSignInAllowed || user.TerminatedOn.HasValue)
@@ -56,12 +54,18 @@ public class SignInEndpoint : AuthTokensEndpoint<SignInCommand, Results<Unauthor
             return TypedResults.Ok((int)user.OtpTypeId!);
         }
 
-        var authTokenResponse = await GenerateAuthTokensAsync(user, req.UseCookies, ct);
+        var authTokenResponse = await GenerateAuthTokensAsync(user, ct);
+        var userRefreshToken = new UserRefreshToken
+        {
+            Token = authTokenResponse.RefreshToken,
+            ExpirationDateTime = authTokenResponse.RefreshTokenExpiration,
+            CreatedDateTime = _dateTimeService.UtcNow
+        };
+        user.RefreshTokens.Add(userRefreshToken);
+        await _userManager.UpdateAsync(user);
 
         await _auditService.AuditUserActionAsync(user.Id, AuditLogTypeEnum.SignIn, ct);
 
-        return authTokenResponse is null
-            ? TypedResults.Ok()
-            : TypedResults.Ok(authTokenResponse);
+        return TypedResults.Ok(authTokenResponse);
     }
 }

@@ -56,4 +56,26 @@ public class TokenService : ITokenService
             RefreshTokenExpiration = refreshTokenExpiration
         };
     }
+
+    public ClaimsPrincipal? GetClaimsPrincipalFromAccessToken(string accessToken)
+    {
+        var tokenValidationParameters = new TokenValidationParameters
+        {
+            ValidIssuer = _securityConfiguration.Jwt.ValidIssuer,
+            ValidAudience = _securityConfiguration.Jwt.ValidAudience,
+            ValidateAudience = true,
+            ValidateIssuer = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_securityConfiguration.Jwt.Secret)),
+            ValidateLifetime = false,
+        };
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var principal = tokenHandler.ValidateToken(accessToken, tokenValidationParameters, out var securityToken);
+
+        if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,
+                StringComparison.InvariantCultureIgnoreCase))
+            return null;
+
+        return principal;
+    }
 }

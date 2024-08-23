@@ -6,4 +6,5 @@ namespace Skillitory.Api.Services.Interfaces;
 public interface ITokenService
 {
     TokenData GenerateAuthTokens(IEnumerable<Claim> claims);
+    ClaimsPrincipal? GetClaimsPrincipalFromAccessToken(string accessToken);
 }

@@ -9,7 +9,7 @@ public class UserRefreshTokenConfiguration : IEntityTypeConfiguration<UserRefres
     public void Configure(EntityTypeBuilder<UserRefreshToken> builder)
     {
         builder.ToTable("user_refresh_token", "auth");
-        builder.HasKey(x => new { x.UserId, x.Token });
+        builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Token)
             .HasMaxLength(100)

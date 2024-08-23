@@ -12,7 +12,7 @@ using Skillitory.Api.DataStore;
 namespace Skillitory.Api.DataStore.Migrations
 {
     [DbContext(typeof(SkillitoryDbContext))]
-    [Migration("20240817231744_InitialMigration")]
+    [Migration("20240823031305_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -340,7 +340,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "925dcd54-5e8f-489d-b3e7-6aed2695eaab",
+                            ConcurrencyStamp = "5915ab07-e358-45f7-bcd9-a96f6c935bda",
                             Description = "Users in this role can read and write all Skillitory resources, including customer data.",
                             IsApplicationAdministratorRole = true,
                             Name = "Skillitory Administrator",
@@ -349,7 +349,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "085d4179-2773-403f-aa44-20741d3e846d",
+                            ConcurrencyStamp = "e1d931b9-edd5-40a2-9ed4-c852112682c1",
                             Description = "Users in this role can read all Skillitory resources, including customer data.",
                             IsApplicationAdministratorRole = true,
                             Name = "Skillitory Viewer",
@@ -358,7 +358,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "c83a5237-001c-493c-b996-ced3c952add8",
+                            ConcurrencyStamp = "cc1f0f67-5453-4d10-a399-01ca67acc5e0",
                             Description = "Users in this role can administrate the organizations that they're associated with.",
                             IsApplicationAdministratorRole = false,
                             Name = "Organization Administrator",
@@ -367,7 +367,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "f1066bfd-b10b-452e-9936-109aba0f2c06",
+                            ConcurrencyStamp = "a4c7fe4c-ab54-41e5-8db6-01b37d56ae70",
                             Description = "Users in this role can view the details and users of the organizations that they're associated with.",
                             IsApplicationAdministratorRole = false,
                             Name = "Organization Viewer",
@@ -376,7 +376,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 5,
-                            ConcurrencyStamp = "4a8f525a-2e78-445b-8feb-4e13c73c9339",
+                            ConcurrencyStamp = "df41bb23-0769-48a0-b156-0257b63c2e2c",
                             Description = "Users in this role are standard users that can manage their own profile, skills, goals, etc.",
                             IsApplicationAdministratorRole = false,
                             Name = "User",
@@ -571,9 +571,9 @@ namespace Skillitory.Api.DataStore.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "361f7a9a-c25c-4935-b47b-3ae7c8d96987",
+                            ConcurrencyStamp = "76db1c63-dd7d-47ff-af4a-c47db92b04d1",
                             CreatedBy = 1,
-                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 8, 17, 23, 17, 44, 770, DateTimeKind.Unspecified).AddTicks(1170), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 8, 23, 3, 13, 5, 337, DateTimeKind.Unspecified).AddTicks(500), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "system_user@skillitory.com",
                             EmailConfirmed = false,
                             FirstName = "SYSTEM",
@@ -587,20 +587,18 @@ namespace Skillitory.Api.DataStore.Migrations
                             SecurityStamp = "NEVER_GOING_TO_SIGN_IN",
                             TwoFactorEnabled = false,
                             UserName = "system_user@skillitory.com",
-                            UserUniqueKey = "h8tgyft2wjdbbhqv9gdu1wpl"
+                            UserUniqueKey = "c6rp9pphr0r0ps2dhj6hjnem"
                         });
                 });
 
             modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Auth.UserRefreshToken", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasColumnName("user_id");
+                        .HasColumnName("id");
 
-                    b.Property<string>("Token")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("token");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTimeOffset>("CreatedDateTime")
                         .HasColumnType("timestamp with time zone")
@@ -610,8 +608,21 @@ namespace Skillitory.Api.DataStore.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("expiration_date_time");
 
-                    b.HasKey("UserId", "Token")
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("token");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
                         .HasName("pk_user_refresh_token");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_user_refresh_token_user_id");
 
                     b.ToTable("user_refresh_token", "auth");
                 });

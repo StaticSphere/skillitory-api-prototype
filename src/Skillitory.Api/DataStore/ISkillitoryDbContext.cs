@@ -10,6 +10,7 @@ public interface ISkillitoryDbContext
     DbSet<SkillitoryUser> Users { get; set; }
     DbSet<SkillitoryRole> Roles { get; set; }
     DbSet<IdentityUserRole<int>> UserRoles { get; set; }
+    DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
     DbSet<AuditLogType> AuditLogTypes { get; set; }
     DbSet<AuditLog> AuditLogs { get; set; }
     DbSet<AuditLogMetaData> AuditLogMetaDatas { get; set; }

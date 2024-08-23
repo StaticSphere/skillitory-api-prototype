@@ -224,6 +224,8 @@ namespace Skillitory.Api.DataStore.Migrations
                 schema: "auth",
                 columns: table => new
                 {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     user_id = table.Column<int>(type: "integer", nullable: false),
                     token = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     created_date_time = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -231,7 +233,7 @@ namespace Skillitory.Api.DataStore.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_user_refresh_token", x => new { x.user_id, x.token });
+                    table.PrimaryKey("pk_user_refresh_token", x => x.id);
                     table.ForeignKey(
                         name: "fk_user_refresh_token_user_user_id",
                         column: x => x.user_id,
@@ -341,18 +343,18 @@ namespace Skillitory.Api.DataStore.Migrations
                 columns: new[] { "id", "concurrency_stamp", "description", "is_application_administrator_role", "name", "normalized_name" },
                 values: new object[,]
                 {
-                    { 1, "925dcd54-5e8f-489d-b3e7-6aed2695eaab", "Users in this role can read and write all Skillitory resources, including customer data.", true, "Skillitory Administrator", "SKILLITORY ADMINISTRATOR" },
-                    { 2, "085d4179-2773-403f-aa44-20741d3e846d", "Users in this role can read all Skillitory resources, including customer data.", true, "Skillitory Viewer", "SKILLITORY VIEWER" },
-                    { 3, "c83a5237-001c-493c-b996-ced3c952add8", "Users in this role can administrate the organizations that they're associated with.", false, "Organization Administrator", "ORGANIZATION ADMINISTRATOR" },
-                    { 4, "f1066bfd-b10b-452e-9936-109aba0f2c06", "Users in this role can view the details and users of the organizations that they're associated with.", false, "Organization Viewer", "ORGANIZATION VIEWER" },
-                    { 5, "4a8f525a-2e78-445b-8feb-4e13c73c9339", "Users in this role are standard users that can manage their own profile, skills, goals, etc.", false, "User", "USER" }
+                    { 1, "5915ab07-e358-45f7-bcd9-a96f6c935bda", "Users in this role can read and write all Skillitory resources, including customer data.", true, "Skillitory Administrator", "SKILLITORY ADMINISTRATOR" },
+                    { 2, "e1d931b9-edd5-40a2-9ed4-c852112682c1", "Users in this role can read all Skillitory resources, including customer data.", true, "Skillitory Viewer", "SKILLITORY VIEWER" },
+                    { 3, "cc1f0f67-5453-4d10-a399-01ca67acc5e0", "Users in this role can administrate the organizations that they're associated with.", false, "Organization Administrator", "ORGANIZATION ADMINISTRATOR" },
+                    { 4, "a4c7fe4c-ab54-41e5-8db6-01b37d56ae70", "Users in this role can view the details and users of the organizations that they're associated with.", false, "Organization Viewer", "ORGANIZATION VIEWER" },
+                    { 5, "df41bb23-0769-48a0-b156-0257b63c2e2c", "Users in this role are standard users that can manage their own profile, skills, goals, etc.", false, "User", "USER" }
                 });
 
             migrationBuilder.InsertData(
                 schema: "auth",
                 table: "user",
                 columns: new[] { "id", "access_failed_count", "avatar_stored_file_id", "biography", "birth_date", "concurrency_stamp", "created_by", "created_date_time", "department_id", "education", "email", "email_confirmed", "external_id", "first_name", "is_sign_in_allowed", "is_system_user", "last_name", "lockout_enabled", "lockout_end", "normalized_email", "normalized_user_name", "organization_id", "otp_type_id", "password_hash", "phone_number", "phone_number_confirmed", "security_stamp", "supervisor_id", "terminated_on", "title", "two_factor_enabled", "updated_by", "updated_date_time", "user_name", "user_unique_key" },
-                values: new object[] { 1, 0, null, null, null, "361f7a9a-c25c-4935-b47b-3ae7c8d96987", 1, new DateTimeOffset(new DateTime(2024, 8, 17, 23, 17, 44, 770, DateTimeKind.Unspecified).AddTicks(1170), new TimeSpan(0, 0, 0, 0, 0)), null, null, "system_user@skillitory.com", false, null, "SYSTEM", false, true, "USER", false, null, "SYSTEM_USER@SKILLITORY.COM", "SYSTEM_USER@SKILLITORY.COM", null, null, null, null, false, "NEVER_GOING_TO_SIGN_IN", null, null, null, false, null, null, "system_user@skillitory.com", "h8tgyft2wjdbbhqv9gdu1wpl" });
+                values: new object[] { 1, 0, null, null, null, "76db1c63-dd7d-47ff-af4a-c47db92b04d1", 1, new DateTimeOffset(new DateTime(2024, 8, 23, 3, 13, 5, 337, DateTimeKind.Unspecified).AddTicks(500), new TimeSpan(0, 0, 0, 0, 0)), null, null, "system_user@skillitory.com", false, null, "SYSTEM", false, true, "USER", false, null, "SYSTEM_USER@SKILLITORY.COM", "SYSTEM_USER@SKILLITORY.COM", null, null, null, null, false, "NEVER_GOING_TO_SIGN_IN", null, null, null, false, null, null, "system_user@skillitory.com", "c6rp9pphr0r0ps2dhj6hjnem" });
 
             migrationBuilder.CreateIndex(
                 name: "ix_audit_log_audit_log_type_id",
@@ -427,6 +429,12 @@ namespace Skillitory.Api.DataStore.Migrations
                 name: "ix_user_login_user_id",
                 schema: "auth",
                 table: "user_login",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_user_refresh_token_user_id",
+                schema: "auth",
+                table: "user_refresh_token",
                 column: "user_id");
 
             migrationBuilder.CreateIndex(

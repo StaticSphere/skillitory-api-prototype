@@ -16,6 +16,7 @@ public class SkillitoryDbContext : IdentityDbContext<SkillitoryUser, SkillitoryR
     private readonly IDateTimeService _dateTimeService;
     private readonly IPrincipalService _principalService;
 
+    public DbSet<UserRefreshToken> UserRefreshTokens { get; set; } = null!;
     public DbSet<AuditLogType> AuditLogTypes { get; set; } = null!;
     public DbSet<AuditLog> AuditLogs { get; set; } = null!;
     public DbSet<AuditLogMetaData> AuditLogMetaDatas { get; set; } = null!;

@@ -3,7 +3,6 @@ using System.Security.Claims;
 using FastEndpoints;
 using Microsoft.AspNetCore.Identity;
 using Skillitory.Api.DataStore.Entities.Auth;
-using Skillitory.Api.Models.Configuration;
 using Skillitory.Api.Services.Interfaces;
 
 namespace Skillitory.Api.Features.Auth.Common;
@@ -11,26 +10,17 @@ namespace Skillitory.Api.Features.Auth.Common;
 public abstract class AuthTokensEndpoint<TRequest, TResponse> : Endpoint<TRequest, TResponse> where TRequest : notnull
 {
     private readonly UserManager<SkillitoryUser> _userManager;
-    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ITokenService _tokenService;
-    private readonly IDateTimeService _dateTimeService;
-    private readonly SecurityConfiguration _securityConfiguration;
 
     protected AuthTokensEndpoint(
         UserManager<SkillitoryUser> userManager,
-        IHttpContextAccessor httpContextAccessor,
-        ITokenService tokenService,
-        IDateTimeService dateTimeService,
-        SecurityConfiguration securityConfiguration)
+        ITokenService tokenService)
     {
         _userManager = userManager;
-        _httpContextAccessor = httpContextAccessor;
         _tokenService = tokenService;
-        _dateTimeService = dateTimeService;
-        _securityConfiguration = securityConfiguration;
     }
 
-    protected async Task<AuthTokensResponse?> GenerateAuthTokensAsync(SkillitoryUser user, bool useCookie, CancellationToken ct = default)
+    protected async Task<AuthTokensResponse> GenerateAuthTokensAsync(SkillitoryUser user, CancellationToken ct = default)
     {
         var roles = await _userManager.GetRolesAsync(user);
         var claims = new List<Claim>
@@ -42,51 +32,11 @@ public abstract class AuthTokensEndpoint<TRequest, TResponse> : Endpoint<TReques
         claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         var tokens = _tokenService.GenerateAuthTokens(claims);
-        var userRefreshToken = new UserRefreshToken
-        {
-            Token = tokens.RefreshToken,
-            ExpirationDateTime = tokens.RefreshTokenExpiration,
-            CreatedDateTime = _dateTimeService.UtcNow
-        };
-        user.RefreshTokens.Add(userRefreshToken);
-
-        await _userManager.UpdateAsync(user);
-
-        var response = new AuthTokensResponse
+        return new AuthTokensResponse
         {
             AccessToken = tokens.AccessToken,
             RefreshToken = tokens.RefreshToken,
             RefreshTokenExpiration = tokens.RefreshTokenExpiration
         };
-
-        if (!useCookie) return response;
-
-        _httpContextAccessor.HttpContext!.Response.Cookies.Append(
-            _securityConfiguration.AccessCookieName,
-            response.AccessToken,
-            new CookieOptions
-            {
-                Expires = tokens.AccessTokenExpiration,
-                Domain = _securityConfiguration.AuthCookieDomain,
-                Path = "/",
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
-            });
-
-        _httpContextAccessor.HttpContext!.Response.Cookies.Append(
-            _securityConfiguration.RefreshCookieName,
-            response.RefreshToken,
-            new CookieOptions
-            {
-                Expires = response.RefreshTokenExpiration,
-                Domain = _securityConfiguration.AuthCookieDomain,
-                Path = "/",
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
-            });
-
-        return null;
     }
 }

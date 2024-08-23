@@ -7,5 +7,4 @@ public record SignInOtpCommand
     public string Email { get; init; } = "";
     public string Otp { get; init; } = "";
     public OtpTypeEnum OtpType { get; init; }
-    public bool UseCookies { get; init; }
 }

@@ -1,0 +1,18 @@
+meta {
+  name: Refresh Tokens
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{protocol}}://{{apibase}}:{{port}}/v1/auth/refresh-tokens
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "accessToken": "",
+    "refreshToken": ""
+  }
+}

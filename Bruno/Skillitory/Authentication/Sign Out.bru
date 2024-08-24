@@ -1,0 +1,21 @@
+meta {
+  name: Sign Out
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{protocol}}://{{apibase}}:{{port}}/v1/auth/sign-out
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: 
+}
+
+body:json {
+  {
+    "refreshToken": ""
+  }
+}

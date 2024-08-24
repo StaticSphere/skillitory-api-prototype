@@ -38,7 +38,10 @@ public class SkillitoryDbContext : IdentityDbContext<SkillitoryUser, SkillitoryR
         foreach (var entity in ChangeTracker.Entries<IAuditableEntity>()
                      .Where(e => e.State is EntityState.Added or EntityState.Modified))
         {
-            var userId = _principalService.IsAuthenticated ? _principalService.UserId : 1;
+            var userId = 1;
+            if (_principalService.IsAuthenticated)
+                userId = await Users.Where(x => x.UserUniqueKey == _principalService.UserUniqueKey).Select(x => x.Id).FirstOrDefaultAsync(cancellationToken);
+
             if (entity.State == EntityState.Added)
             {
                 entity.Entity.CreatedBy =  userId;

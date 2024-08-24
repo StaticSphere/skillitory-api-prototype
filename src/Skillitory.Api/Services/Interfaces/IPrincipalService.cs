@@ -2,11 +2,10 @@ namespace Skillitory.Api.Services.Interfaces;
 
 public interface IPrincipalService
 {
-    int UserId { get; }
+    string UserUniqueKey { get; }
     bool IsAuthenticated { get; }
 
-    Guid UserUniqueKey { get; }
-    Guid? OrganizationUniqueKey { get; }
+    string? OrganizationUniqueKey { get; }
 
     bool IsSkillitoryAdministrator { get; }
     bool IsSkillitoryViewer { get; }

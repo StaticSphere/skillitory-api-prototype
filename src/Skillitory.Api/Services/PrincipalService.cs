@@ -1,4 +1,4 @@
-using System.Globalization;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Skillitory.Api.DataStore;
 using Skillitory.Api.Exceptions;
@@ -17,23 +17,14 @@ public class PrincipalService : IPrincipalService
 
     private ClaimsPrincipal? CurrentClaimsPrincipal => _httpContextAccessor.HttpContext?.User;
 
-    public int UserId =>
+    public string UserUniqueKey =>
         CurrentClaimsPrincipal is null
             ? throw new MissingClaimsPrincipalException()
-            : int.Parse(
-                CurrentClaimsPrincipal.FindFirst(ClaimTypes.NameIdentifier)?.Value ??
-                throw new MissingClaimsPrincipalException(),
-                CultureInfo.CurrentCulture);
+            : CurrentClaimsPrincipal.FindFirst(JwtRegisteredClaimNames.Sub)?.Value ?? throw new MissingClaimsPrincipalException();
 
     public bool IsAuthenticated => CurrentClaimsPrincipal?.Identity?.IsAuthenticated ?? false;
 
-    public Guid UserUniqueKey =>
-        CurrentClaimsPrincipal is null
-            ? throw new MissingClaimsPrincipalException()
-            : Guid.Parse(
-                CurrentClaimsPrincipal.FindFirst("UniqueKey")?.Value ?? throw new MissingClaimsPrincipalException());
-
-    public Guid? OrganizationUniqueKey
+    public string? OrganizationUniqueKey
     {
         get
         {
@@ -41,9 +32,7 @@ public class PrincipalService : IPrincipalService
                 throw new MissingClaimsPrincipalException();
 
             var organizationUniqueKeyClaim = CurrentClaimsPrincipal.FindFirst("OrganizationUniqueKey");
-            return organizationUniqueKeyClaim is not null
-                ? Guid.Parse(organizationUniqueKeyClaim.Value)
-                : null;
+            return organizationUniqueKeyClaim?.Value;
         }
     }
 

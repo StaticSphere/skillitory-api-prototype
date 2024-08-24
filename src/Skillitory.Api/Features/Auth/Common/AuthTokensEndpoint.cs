@@ -26,7 +26,7 @@ public abstract class AuthTokensEndpoint<TRequest, TResponse> : Endpoint<TReques
         var claims = new List<Claim>
         {
             new(ClaimTypes.Name, user.UserName!),
-            new(JwtRegisteredClaimNames.Sub, user.UserUniqueKey),
+            new(ClaimTypes.NameIdentifier, user.UserUniqueKey),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
         claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));

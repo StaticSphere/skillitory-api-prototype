@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Skillitory.Api.Services.Interfaces;
@@ -6,23 +7,28 @@ namespace Skillitory.Api.Features.Auth.SignOut;
 
 public class SignOutEndpoint : Endpoint<SignOutCommand, Ok>
 {
+    private readonly ITokenService _tokenService;
     private readonly ISignOutDataService _signOutDataService;
-    private readonly IPrincipalService _principalService;
-
-    public SignOutEndpoint(ISignOutDataService signOutDataService, IPrincipalService principalService)
+    public SignOutEndpoint(ITokenService tokenService, ISignOutDataService signOutDataService)
     {
+        _tokenService = tokenService;
         _signOutDataService = signOutDataService;
-        _principalService = principalService;
     }
 
     public override void Configure()
     {
         Post("/auth/sign-out");
+        AllowAnonymous();
     }
 
     public override async Task<Ok> ExecuteAsync(SignOutCommand req, CancellationToken ct)
     {
-        await _signOutDataService.DeleteUserRefreshTokenAsync(_principalService.UserUniqueKey, req.RefreshToken, ct);
+        var claimsPrincipal = _tokenService.GetClaimsPrincipalFromAccessToken(req.AccessToken);
+
+        var userUniqueKey = claimsPrincipal?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userUniqueKey)) return TypedResults.Ok();
+
+        await _signOutDataService.DeleteUserRefreshTokenAsync(userUniqueKey, req.RefreshToken, ct);
 
         return TypedResults.Ok();
     }

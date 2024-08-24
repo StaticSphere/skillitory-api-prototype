@@ -58,7 +58,6 @@ public static partial class ApiServicesBootstrap
             .AddJwtBearer(x =>
             {
                 x.SaveToken = true;
-                x.MapInboundClaims = false;
                 x.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidIssuer = securitySettings.Jwt.ValidIssuer,

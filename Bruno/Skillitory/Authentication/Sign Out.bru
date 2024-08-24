@@ -7,15 +7,12 @@ meta {
 post {
   url: {{protocol}}://{{apibase}}:{{port}}/v1/auth/sign-out
   body: json
-  auth: bearer
-}
-
-auth:bearer {
-  token: 
+  auth: none
 }
 
 body:json {
   {
-    "refreshToken": ""
+    "accessToken": "{{accessToken}}",
+    "refreshToken": "{{refreshToken}}"
   }
 }

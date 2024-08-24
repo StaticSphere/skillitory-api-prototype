@@ -5,7 +5,7 @@ using Skillitory.Api.Services.Interfaces;
 
 namespace Skillitory.Api.Features.Auth.SignOut;
 
-public class SignOutEndpoint : Endpoint<SignOutCommand, Ok>
+public class SignOutEndpoint : Endpoint<SignOutCommand, NoContent>
 {
     private readonly ITokenService _tokenService;
     private readonly ISignOutDataService _signOutDataService;
@@ -21,15 +21,15 @@ public class SignOutEndpoint : Endpoint<SignOutCommand, Ok>
         AllowAnonymous();
     }
 
-    public override async Task<Ok> ExecuteAsync(SignOutCommand req, CancellationToken ct)
+    public override async Task<NoContent> ExecuteAsync(SignOutCommand req, CancellationToken ct)
     {
         var claimsPrincipal = _tokenService.GetClaimsPrincipalFromAccessToken(req.AccessToken);
 
         var userUniqueKey = claimsPrincipal?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrEmpty(userUniqueKey)) return TypedResults.Ok();
+        if (string.IsNullOrEmpty(userUniqueKey)) return TypedResults.NoContent();
 
         await _signOutDataService.DeleteUserRefreshTokenAsync(userUniqueKey, req.RefreshToken, ct);
 
-        return TypedResults.Ok();
+        return TypedResults.NoContent();
     }
 }

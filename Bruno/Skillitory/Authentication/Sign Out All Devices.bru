@@ -1,0 +1,17 @@
+meta {
+  name: Sign Out All Devices
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{protocol}}://{{apibase}}:{{port}}/v1/auth/sign-out-all-devices
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "accessToken": "{{accessToken}}"
+  }
+}

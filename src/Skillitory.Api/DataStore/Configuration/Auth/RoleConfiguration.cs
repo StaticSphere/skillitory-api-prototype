@@ -6,9 +6,9 @@ using Skillitory.Api.DataStore.Entities.Auth;
 namespace Skillitory.Api.DataStore.Configuration.Auth;
 
 [ExcludeFromCodeCoverage]
-public class RoleConfiguration : IEntityTypeConfiguration<SkillitoryRole>
+public class RoleConfiguration : IEntityTypeConfiguration<AuthRole>
 {
-    public void Configure(EntityTypeBuilder<SkillitoryRole> builder)
+    public void Configure(EntityTypeBuilder<AuthRole> builder)
     {
         builder.ToTable("role", "auth");
 

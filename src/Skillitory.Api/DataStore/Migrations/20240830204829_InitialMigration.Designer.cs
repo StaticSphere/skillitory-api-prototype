@@ -12,7 +12,7 @@ using Skillitory.Api.DataStore;
 namespace Skillitory.Api.DataStore.Migrations
 {
     [DbContext(typeof(SkillitoryDbContext))]
-    [Migration("20240823031305_InitialMigration")]
+    [Migration("20240830204829_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -228,9 +228,9 @@ namespace Skillitory.Api.DataStore.Migrations
                         .HasColumnName("name");
 
                     b.HasKey("Id")
-                        .HasName("pk_otp_type");
+                        .HasName("pk_audit_log_type");
 
-                    b.ToTable("otp_type", "auth");
+                    b.ToTable("audit_log_type", "audit");
 
                     b.HasData(
                         new
@@ -265,36 +265,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Auth.OtpType", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("name");
-
-                    b.HasKey("Id")
-                        .HasName("pk_otp_type");
-
-                    b.ToTable("otp_type", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Email"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "TimeBased"
-                        });
-                });
-
-            modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Auth.SkillitoryRole", b =>
+            modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Auth.AuthRole", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -340,7 +311,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "5915ab07-e358-45f7-bcd9-a96f6c935bda",
+                            ConcurrencyStamp = "9f195edf-fe77-494b-8916-8636cda8007a",
                             Description = "Users in this role can read and write all Skillitory resources, including customer data.",
                             IsApplicationAdministratorRole = true,
                             Name = "Skillitory Administrator",
@@ -349,7 +320,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "e1d931b9-edd5-40a2-9ed4-c852112682c1",
+                            ConcurrencyStamp = "58042242-5985-46cb-9b79-046fef34664a",
                             Description = "Users in this role can read all Skillitory resources, including customer data.",
                             IsApplicationAdministratorRole = true,
                             Name = "Skillitory Viewer",
@@ -358,7 +329,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "cc1f0f67-5453-4d10-a399-01ca67acc5e0",
+                            ConcurrencyStamp = "c3cd231d-91ba-444b-b126-95696fa67558",
                             Description = "Users in this role can administrate the organizations that they're associated with.",
                             IsApplicationAdministratorRole = false,
                             Name = "Organization Administrator",
@@ -367,7 +338,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "a4c7fe4c-ab54-41e5-8db6-01b37d56ae70",
+                            ConcurrencyStamp = "a6ee41a4-a144-447c-83f1-5f6f42662138",
                             Description = "Users in this role can view the details and users of the organizations that they're associated with.",
                             IsApplicationAdministratorRole = false,
                             Name = "Organization Viewer",
@@ -376,7 +347,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 5,
-                            ConcurrencyStamp = "df41bb23-0769-48a0-b156-0257b63c2e2c",
+                            ConcurrencyStamp = "877a0306-76f4-4432-9fb2-bebbcc768c33",
                             Description = "Users in this role are standard users that can manage their own profile, skills, goals, etc.",
                             IsApplicationAdministratorRole = false,
                             Name = "User",
@@ -384,7 +355,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Auth.SkillitoryUser", b =>
+            modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Auth.AuthUser", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -396,19 +367,6 @@ namespace Skillitory.Api.DataStore.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer")
                         .HasColumnName("access_failed_count");
-
-                    b.Property<int?>("AvatarStoredFileId")
-                        .HasColumnType("integer")
-                        .HasColumnName("avatar_stored_file_id");
-
-                    b.Property<string>("Biography")
-                        .HasMaxLength(4000)
-                        .HasColumnType("character varying(4000)")
-                        .HasColumnName("biography");
-
-                    b.Property<DateOnly?>("BirthDate")
-                        .HasColumnType("date")
-                        .HasColumnName("birth_date");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -423,15 +381,6 @@ namespace Skillitory.Api.DataStore.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_date_time");
 
-                    b.Property<int?>("DepartmentId")
-                        .HasColumnType("integer")
-                        .HasColumnName("department_id");
-
-                    b.Property<string>("Education")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)")
-                        .HasColumnName("education");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
@@ -441,17 +390,6 @@ namespace Skillitory.Api.DataStore.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("email_confirmed");
 
-                    b.Property<string>("ExternalId")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("external_id");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("first_name");
-
                     b.Property<bool>("IsSignInAllowed")
                         .HasColumnType("boolean")
                         .HasColumnName("is_sign_in_allowed");
@@ -459,12 +397,6 @@ namespace Skillitory.Api.DataStore.Migrations
                     b.Property<bool>("IsSystemUser")
                         .HasColumnType("boolean")
                         .HasColumnName("is_system_user");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("last_name");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean")
@@ -483,10 +415,6 @@ namespace Skillitory.Api.DataStore.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
                         .HasColumnName("normalized_user_name");
-
-                    b.Property<int?>("OrganizationId")
-                        .HasColumnType("integer")
-                        .HasColumnName("organization_id");
 
                     b.Property<int?>("OtpTypeId")
                         .HasColumnType("integer")
@@ -508,18 +436,9 @@ namespace Skillitory.Api.DataStore.Migrations
                         .HasColumnType("text")
                         .HasColumnName("security_stamp");
 
-                    b.Property<int?>("SupervisorId")
-                        .HasColumnType("integer")
-                        .HasColumnName("supervisor_id");
-
                     b.Property<DateTimeOffset?>("TerminatedOn")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("terminated_on");
-
-                    b.Property<string>("Title")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("title");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean")
@@ -557,9 +476,6 @@ namespace Skillitory.Api.DataStore.Migrations
                     b.HasIndex("OtpTypeId")
                         .HasDatabaseName("ix_user_otp_type_id");
 
-                    b.HasIndex("SupervisorId")
-                        .HasDatabaseName("ix_user_supervisor_id");
-
                     b.HasIndex("UserUniqueKey")
                         .IsUnique()
                         .HasDatabaseName("ix_user_user_unique_key");
@@ -571,15 +487,13 @@ namespace Skillitory.Api.DataStore.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "76db1c63-dd7d-47ff-af4a-c47db92b04d1",
+                            ConcurrencyStamp = "1c3f6b38-7947-42f8-a007-efa0ecf053db",
                             CreatedBy = 1,
-                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 8, 23, 3, 13, 5, 337, DateTimeKind.Unspecified).AddTicks(500), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 8, 30, 20, 48, 29, 158, DateTimeKind.Unspecified).AddTicks(300), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "system_user@skillitory.com",
                             EmailConfirmed = false,
-                            FirstName = "SYSTEM",
                             IsSignInAllowed = false,
                             IsSystemUser = true,
-                            LastName = "USER",
                             LockoutEnabled = false,
                             NormalizedEmail = "SYSTEM_USER@SKILLITORY.COM",
                             NormalizedUserName = "SYSTEM_USER@SKILLITORY.COM",
@@ -587,7 +501,37 @@ namespace Skillitory.Api.DataStore.Migrations
                             SecurityStamp = "NEVER_GOING_TO_SIGN_IN",
                             TwoFactorEnabled = false,
                             UserName = "system_user@skillitory.com",
-                            UserUniqueKey = "c6rp9pphr0r0ps2dhj6hjnem"
+                            UserUniqueKey = "m4zbku87v6gffhm772kevlzx"
+                        });
+                });
+
+            modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Auth.OtpType", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id")
+                        .HasName("pk_otp_type");
+
+                    b.ToTable("otp_type", "auth");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Email"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "TimeBased"
                         });
                 });
 
@@ -627,9 +571,377 @@ namespace Skillitory.Api.DataStore.Migrations
                     b.ToTable("user_refresh_token", "auth");
                 });
 
+            modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Mbr.Member", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer")
+                        .HasColumnName("user_id");
+
+                    b.Property<int?>("AvatarStoredFileId")
+                        .HasColumnType("integer")
+                        .HasColumnName("avatar_stored_file_id");
+
+                    b.Property<string>("Biography")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)")
+                        .HasColumnName("biography");
+
+                    b.Property<DateOnly?>("BirthDate")
+                        .HasColumnType("date")
+                        .HasColumnName("birth_date");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTimeOffset>("CreatedDateTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_date_time");
+
+                    b.Property<int?>("DepartmentId")
+                        .HasColumnType("integer")
+                        .HasColumnName("department_id");
+
+                    b.Property<string>("Education")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("education");
+
+                    b.Property<string>("ExternalId")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("external_id");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("first_name");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("last_name");
+
+                    b.Property<int?>("OrganizationId")
+                        .HasColumnType("integer")
+                        .HasColumnName("organization_id");
+
+                    b.Property<int?>("SupervisorId")
+                        .HasColumnType("integer")
+                        .HasColumnName("supervisor_id");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("title");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("integer")
+                        .HasColumnName("updated_by");
+
+                    b.Property<DateTimeOffset?>("UpdatedDateTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_date_time");
+
+                    b.HasKey("UserId")
+                        .HasName("pk_member");
+
+                    b.HasIndex("DepartmentId")
+                        .HasDatabaseName("ix_member_department_id");
+
+                    b.HasIndex("OrganizationId")
+                        .HasDatabaseName("ix_member_organization_id");
+
+                    b.HasIndex("SupervisorId")
+                        .HasDatabaseName("ix_member_supervisor_id");
+
+                    b.ToTable("member", "mbr");
+                });
+
+            modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Org.Department", b =>
+                {
+                    b.Property<int>("DepartmentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("department_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DepartmentId"));
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTimeOffset>("CreatedDateTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_date_time");
+
+                    b.Property<Guid>("DepartmentUniqueKey")
+                        .HasColumnType("uuid")
+                        .HasColumnName("department_unique_key");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("description");
+
+                    b.Property<int?>("LogoStoredFileId")
+                        .HasColumnType("integer")
+                        .HasColumnName("logo_stored_file_id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)")
+                        .HasColumnName("notes");
+
+                    b.Property<int>("OrganizationId")
+                        .HasColumnType("integer")
+                        .HasColumnName("organization_id");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("integer")
+                        .HasColumnName("updated_by");
+
+                    b.Property<DateTimeOffset?>("UpdatedDateTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_date_time");
+
+                    b.HasKey("DepartmentId")
+                        .HasName("pk_department");
+
+                    b.HasIndex("CreatedBy")
+                        .HasDatabaseName("ix_department_created_by");
+
+                    b.HasIndex("DepartmentUniqueKey")
+                        .IsUnique()
+                        .HasDatabaseName("ix_department_department_unique_key");
+
+                    b.HasIndex("UpdatedBy")
+                        .HasDatabaseName("ix_department_updated_by");
+
+                    b.HasIndex("OrganizationId", "Name")
+                        .IsUnique()
+                        .HasDatabaseName("ix_department_organization_id_name");
+
+                    b.ToTable("department", "org");
+                });
+
+            modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Org.Organization", b =>
+                {
+                    b.Property<int>("OrganizationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("organization_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("OrganizationId"));
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTimeOffset>("CreatedDateTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_date_time");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("ExternalIdName")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("external_id_name");
+
+                    b.Property<bool>("IsLogoOverrideAllowed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_logo_override_allowed");
+
+                    b.Property<bool>("IsSystemOrganization")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_system_organization");
+
+                    b.Property<int?>("LogoStoredFileId")
+                        .HasColumnType("integer")
+                        .HasColumnName("logo_stored_file_id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)")
+                        .HasColumnName("notes");
+
+                    b.Property<Guid>("OrganizationUniqueKey")
+                        .HasColumnType("uuid")
+                        .HasColumnName("organization_unique_key");
+
+                    b.Property<DateOnly?>("TrialPeriodEndsOn")
+                        .HasColumnType("date")
+                        .HasColumnName("trial_period_ends_on");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("integer")
+                        .HasColumnName("updated_by");
+
+                    b.Property<DateTimeOffset?>("UpdatedDateTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_date_time");
+
+                    b.HasKey("OrganizationId")
+                        .HasName("pk_organization");
+
+                    b.HasIndex("CreatedBy")
+                        .HasDatabaseName("ix_organization_created_by");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("ix_organization_name");
+
+                    b.HasIndex("OrganizationUniqueKey")
+                        .IsUnique()
+                        .HasDatabaseName("ix_organization_organization_unique_key");
+
+                    b.HasIndex("UpdatedBy")
+                        .HasDatabaseName("ix_organization_updated_by");
+
+                    b.ToTable("organization", "org");
+
+                    b.HasData(
+                        new
+                        {
+                            OrganizationId = 1,
+                            CreatedBy = 1,
+                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 8, 30, 20, 48, 29, 158, DateTimeKind.Unspecified).AddTicks(400), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "The organization that owns and developed Skillitory.",
+                            IsLogoOverrideAllowed = false,
+                            IsSystemOrganization = true,
+                            Name = "StaticSphere",
+                            OrganizationUniqueKey = new Guid("ad6814b7-c205-4b00-8710-4f10922ded4c")
+                        });
+                });
+
+            modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Org.OrganizationChurn", b =>
+                {
+                    b.Property<int>("OrganizationChurnId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("organization_churn_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("OrganizationChurnId"));
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTimeOffset>("CreatedDateTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_date_time");
+
+                    b.Property<string>("Details")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("details");
+
+                    b.Property<bool>("IsChurned")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_churned");
+
+                    b.Property<int>("OrganizationChurnCategoryId")
+                        .HasColumnType("integer")
+                        .HasColumnName("organization_churn_category_id");
+
+                    b.Property<int>("OrganizationId")
+                        .HasColumnType("integer")
+                        .HasColumnName("organization_id");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("integer")
+                        .HasColumnName("updated_by");
+
+                    b.Property<DateTimeOffset?>("UpdatedDateTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_date_time");
+
+                    b.HasKey("OrganizationChurnId")
+                        .HasName("pk_organization_churn");
+
+                    b.HasIndex("OrganizationChurnCategoryId")
+                        .HasDatabaseName("ix_organization_churn_organization_churn_category_id");
+
+                    b.HasIndex("OrganizationId")
+                        .HasDatabaseName("ix_organization_churn_organization_id");
+
+                    b.ToTable("organization_churn", "org");
+                });
+
+            modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Org.OrganizationChurnCategory", b =>
+                {
+                    b.Property<int>("OrganizationChurnCategoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("organization_churn_category_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("OrganizationChurnCategoryId"));
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.HasKey("OrganizationChurnCategoryId")
+                        .HasName("pk_organization_churn_category");
+
+                    b.ToTable("organization_churn_category", "org");
+
+                    b.HasData(
+                        new
+                        {
+                            OrganizationChurnCategoryId = 1,
+                            Description = "The user has churned because they were unhappy with some element of the application.",
+                            Name = "Unhappy with Application"
+                        },
+                        new
+                        {
+                            OrganizationChurnCategoryId = 2,
+                            Description = "The user has churned because they were unhappy with service.",
+                            Name = "Unhappy with Service"
+                        },
+                        new
+                        {
+                            OrganizationChurnCategoryId = 3,
+                            Description = "The user has churned because they no longer feel that the product is cost effective.",
+                            Name = "No Longer Price Effective"
+                        },
+                        new
+                        {
+                            OrganizationChurnCategoryId = 4,
+                            Description = "The user has churned for a reason other than that provided by the other churn options.",
+                            Name = "Other"
+                        });
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
-                    b.HasOne("Skillitory.Api.DataStore.Entities.Auth.SkillitoryRole", null)
+                    b.HasOne("Skillitory.Api.DataStore.Entities.Auth.AuthRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -639,7 +951,7 @@ namespace Skillitory.Api.DataStore.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
                 {
-                    b.HasOne("Skillitory.Api.DataStore.Entities.Auth.SkillitoryUser", null)
+                    b.HasOne("Skillitory.Api.DataStore.Entities.Auth.AuthUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -649,7 +961,7 @@ namespace Skillitory.Api.DataStore.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
-                    b.HasOne("Skillitory.Api.DataStore.Entities.Auth.SkillitoryUser", null)
+                    b.HasOne("Skillitory.Api.DataStore.Entities.Auth.AuthUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -659,14 +971,14 @@ namespace Skillitory.Api.DataStore.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
                 {
-                    b.HasOne("Skillitory.Api.DataStore.Entities.Auth.SkillitoryRole", null)
+                    b.HasOne("Skillitory.Api.DataStore.Entities.Auth.AuthRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_user_role_role_role_id");
 
-                    b.HasOne("Skillitory.Api.DataStore.Entities.Auth.SkillitoryUser", null)
+                    b.HasOne("Skillitory.Api.DataStore.Entities.Auth.AuthUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -676,7 +988,7 @@ namespace Skillitory.Api.DataStore.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
-                    b.HasOne("Skillitory.Api.DataStore.Entities.Auth.SkillitoryUser", null)
+                    b.HasOne("Skillitory.Api.DataStore.Entities.Auth.AuthUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -693,7 +1005,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_audit_log_audit_log_types_audit_log_type_id");
 
-                    b.HasOne("Skillitory.Api.DataStore.Entities.Auth.SkillitoryUser", "User")
+                    b.HasOne("Skillitory.Api.DataStore.Entities.Auth.AuthUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -717,26 +1029,19 @@ namespace Skillitory.Api.DataStore.Migrations
                     b.Navigation("AuditLog");
                 });
 
-            modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Auth.SkillitoryUser", b =>
+            modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Auth.AuthUser", b =>
                 {
                     b.HasOne("Skillitory.Api.DataStore.Entities.Auth.OtpType", "OtpType")
                         .WithMany()
                         .HasForeignKey("OtpTypeId")
                         .HasConstraintName("fk_user_otp_type_otp_type_id");
 
-                    b.HasOne("Skillitory.Api.DataStore.Entities.Auth.SkillitoryUser", "Supervisor")
-                        .WithMany()
-                        .HasForeignKey("SupervisorId")
-                        .HasConstraintName("fk_user_user_supervisor_id");
-
                     b.Navigation("OtpType");
-
-                    b.Navigation("Supervisor");
                 });
 
             modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Auth.UserRefreshToken", b =>
                 {
-                    b.HasOne("Skillitory.Api.DataStore.Entities.Auth.SkillitoryUser", "User")
+                    b.HasOne("Skillitory.Api.DataStore.Entities.Auth.AuthUser", "User")
                         .WithMany("RefreshTokens")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -746,9 +1051,121 @@ namespace Skillitory.Api.DataStore.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Auth.SkillitoryUser", b =>
+            modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Mbr.Member", b =>
                 {
+                    b.HasOne("Skillitory.Api.DataStore.Entities.Org.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId")
+                        .HasConstraintName("fk_member_department_department_id");
+
+                    b.HasOne("Skillitory.Api.DataStore.Entities.Org.Organization", "Organization")
+                        .WithMany("Users")
+                        .HasForeignKey("OrganizationId")
+                        .HasConstraintName("fk_member_organization_organization_id");
+
+                    b.HasOne("Skillitory.Api.DataStore.Entities.Mbr.Member", "Supervisor")
+                        .WithMany()
+                        .HasForeignKey("SupervisorId")
+                        .HasConstraintName("fk_member_member_supervisor_id");
+
+                    b.HasOne("Skillitory.Api.DataStore.Entities.Auth.AuthUser", "User")
+                        .WithOne("Member")
+                        .HasForeignKey("Skillitory.Api.DataStore.Entities.Mbr.Member", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_member_user_user_id");
+
+                    b.Navigation("Department");
+
+                    b.Navigation("Organization");
+
+                    b.Navigation("Supervisor");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Org.Department", b =>
+                {
+                    b.HasOne("Skillitory.Api.DataStore.Entities.Auth.AuthUser", "CreationUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_department_user_created_by");
+
+                    b.HasOne("Skillitory.Api.DataStore.Entities.Org.Organization", "Organization")
+                        .WithMany("Departments")
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_department_organization_organization_id");
+
+                    b.HasOne("Skillitory.Api.DataStore.Entities.Auth.AuthUser", "UpdatingUser")
+                        .WithMany()
+                        .HasForeignKey("UpdatedBy")
+                        .HasConstraintName("fk_department_user_updated_by");
+
+                    b.Navigation("CreationUser");
+
+                    b.Navigation("Organization");
+
+                    b.Navigation("UpdatingUser");
+                });
+
+            modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Org.Organization", b =>
+                {
+                    b.HasOne("Skillitory.Api.DataStore.Entities.Auth.AuthUser", "CreationUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_organization_user_created_by");
+
+                    b.HasOne("Skillitory.Api.DataStore.Entities.Auth.AuthUser", "UpdatingUser")
+                        .WithMany()
+                        .HasForeignKey("UpdatedBy")
+                        .HasConstraintName("fk_organization_user_updated_by");
+
+                    b.Navigation("CreationUser");
+
+                    b.Navigation("UpdatingUser");
+                });
+
+            modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Org.OrganizationChurn", b =>
+                {
+                    b.HasOne("Skillitory.Api.DataStore.Entities.Org.OrganizationChurnCategory", "OrganizationChurnCategory")
+                        .WithMany()
+                        .HasForeignKey("OrganizationChurnCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_organization_churn_organization_churn_category_organization");
+
+                    b.HasOne("Skillitory.Api.DataStore.Entities.Org.Organization", "Organization")
+                        .WithMany("OrganizationChurns")
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_organization_churn_organization_organization_id");
+
+                    b.Navigation("Organization");
+
+                    b.Navigation("OrganizationChurnCategory");
+                });
+
+            modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Auth.AuthUser", b =>
+                {
+                    b.Navigation("Member");
+
                     b.Navigation("RefreshTokens");
+                });
+
+            modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Org.Organization", b =>
+                {
+                    b.Navigation("Departments");
+
+                    b.Navigation("OrganizationChurns");
+
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

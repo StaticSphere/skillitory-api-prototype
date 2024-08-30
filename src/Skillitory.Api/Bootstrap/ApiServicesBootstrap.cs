@@ -77,8 +77,8 @@ public static partial class ApiServicesBootstrap
             .AddScoped<ISkillitoryDbContext, SkillitoryDbContext>();
 
         services
-            .AddIdentityCore<SkillitoryUser>()
-            .AddRoles<SkillitoryRole>()
+            .AddIdentityCore<AuthUser>()
+            .AddRoles<AuthRole>()
             .AddEntityFrameworkStores<SkillitoryDbContext>()
             .AddDefaultTokenProviders();
 

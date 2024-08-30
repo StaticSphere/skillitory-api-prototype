@@ -10,6 +10,6 @@ public class AuditLog
     public AuditLogTypeEnum AuditLogTypeId { get; set; }
     public DateTimeOffset TimeStamp { get; set; }
 
-    public SkillitoryUser User { get; set; } = null!;
+    public AuthUser User { get; set; } = null!;
     public AuditLogType AuditLogType { get; set; } = null!;
 }

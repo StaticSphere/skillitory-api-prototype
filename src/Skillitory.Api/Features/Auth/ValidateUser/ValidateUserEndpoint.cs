@@ -9,12 +9,12 @@ namespace Skillitory.Api.Features.Auth.ValidateUser;
 
 public class ValidateUserEndpoint : Endpoint<ValidateUserCommand, Results<NotFound, UnprocessableEntity, NoContent>>
 {
-    private readonly UserManager<SkillitoryUser> _userManager;
+    private readonly UserManager<AuthUser> _userManager;
     private readonly IValidateUserDataService _validateUserDataService;
     private readonly IAuditService _auditService;
 
     public ValidateUserEndpoint(
-        UserManager<SkillitoryUser> userManager,
+        UserManager<AuthUser> userManager,
         IValidateUserDataService validateUserDataService,
         IAuditService auditService)
     {

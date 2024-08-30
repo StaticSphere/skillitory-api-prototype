@@ -8,13 +8,13 @@ namespace Skillitory.Api.Features.Auth.RefreshTokens;
 
 public class RefreshTokensEndpoint : AuthTokensEndpoint<RefreshTokensCommand, Results<UnauthorizedHttpResult, Ok<AuthTokensResponse>>>
 {
-    private readonly UserManager<SkillitoryUser> _userManager;
+    private readonly UserManager<AuthUser> _userManager;
     private readonly IRefreshTokensDataService _refreshTokensDataService;
     private readonly ITokenService _tokenService;
     private readonly IDateTimeService _dateTimeService;
 
     public RefreshTokensEndpoint(
-        UserManager<SkillitoryUser> userManager,
+        UserManager<AuthUser> userManager,
         IRefreshTokensDataService refreshTokensDataService,
         ITokenService tokenService,
         IDateTimeService dateTimeService)

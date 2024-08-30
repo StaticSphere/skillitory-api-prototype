@@ -9,13 +9,13 @@ namespace Skillitory.Api.Features.Auth.SignIn;
 
 public class SignInEndpoint : AuthTokensEndpoint<SignInCommand, Results<UnauthorizedHttpResult, Ok<AuthTokensResponse>, Ok<int>>>
 {
-    private readonly UserManager<SkillitoryUser> _userManager;
+    private readonly UserManager<AuthUser> _userManager;
     private readonly IEmailService _emailService;
     private readonly IDateTimeService _dateTimeService;
     private readonly IAuditService _auditService;
 
     public SignInEndpoint(
-        UserManager<SkillitoryUser> userManager,
+        UserManager<AuthUser> userManager,
         ITokenService tokenService,
         IDateTimeService dateTimeService,
         IEmailService emailService,

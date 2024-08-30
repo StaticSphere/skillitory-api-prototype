@@ -8,5 +8,5 @@ public class UserRefreshToken
     public DateTimeOffset CreatedDateTime { get; set; }
     public DateTimeOffset ExpirationDateTime { get; set; }
 
-    public SkillitoryUser User { get; set; } = null!;
+    public AuthUser User { get; set; } = null!;
 }

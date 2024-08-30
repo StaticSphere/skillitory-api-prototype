@@ -5,17 +5,19 @@ using Microsoft.EntityFrameworkCore;
 using Skillitory.Api.DataStore.Common;
 using Skillitory.Api.DataStore.Entities.Audit;
 using Skillitory.Api.DataStore.Entities.Auth;
+using Skillitory.Api.DataStore.Entities.Mbr;
 using Skillitory.Api.Services.Interfaces;
 
 namespace Skillitory.Api.DataStore;
 
 [ExcludeFromCodeCoverage]
-public class SkillitoryDbContext : IdentityDbContext<SkillitoryUser, SkillitoryRole, int>, ISkillitoryDbContext
+public class SkillitoryDbContext : IdentityDbContext<AuthUser, AuthRole, int>, ISkillitoryDbContext
 {
     private readonly IConfiguration _configuration;
     private readonly IDateTimeService _dateTimeService;
     private readonly IPrincipalService _principalService;
 
+    public DbSet<Member> Members { get; set; } = null!;
     public DbSet<UserRefreshToken> UserRefreshTokens { get; set; } = null!;
     public DbSet<AuditLogType> AuditLogTypes { get; set; } = null!;
     public DbSet<AuditLog> AuditLogs { get; set; } = null!;

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Skillitory.Api.DataStore.Common.Enumerations;
 using Skillitory.Api.DataStore.Entities.Audit;
 using Skillitory.Api.DataStore.Entities.Auth;
+using Skillitory.Api.DataStore.Entities.Org;
 using Visus.Cuid;
 
 namespace Skillitory.Api.DataStore;
@@ -12,15 +13,13 @@ public static class ModelBuilderExtensions
 {
     public static void SeedData(this ModelBuilder builder)
     {
-        builder.Entity<SkillitoryUser>().HasData(
-            new SkillitoryUser
+        builder.Entity<AuthUser>().HasData(
+            new AuthUser
             {
                 Id = 1,
                 UserUniqueKey = new Cuid2().ToString(),
                 Email = "system_user@skillitory.com",
                 NormalizedEmail = "SYSTEM_USER@SKILLITORY.COM",
-                FirstName = "SYSTEM",
-                LastName = "USER",
                 UserName = "system_user@skillitory.com",
                 NormalizedUserName = "SYSTEM_USER@SKILLITORY.COM",
                 IsSignInAllowed = false,
@@ -36,8 +35,8 @@ public static class ModelBuilderExtensions
             }
         );
 
-        builder.Entity<SkillitoryRole>().HasData(
-            new SkillitoryRole
+        builder.Entity<AuthRole>().HasData(
+            new AuthRole
             {
                 Id = 1,
                 Name = DataStoreConstants.SkillitoryAdministratorRoleName,
@@ -47,7 +46,7 @@ public static class ModelBuilderExtensions
                 ConcurrencyStamp = Guid.NewGuid().ToString(),
                 IsApplicationAdministratorRole = true
             },
-            new SkillitoryRole
+            new AuthRole
             {
                 Id = 2,
                 Name = DataStoreConstants.SkillitoryViewerRoleName,
@@ -56,7 +55,7 @@ public static class ModelBuilderExtensions
                 ConcurrencyStamp = Guid.NewGuid().ToString(),
                 IsApplicationAdministratorRole = true
             },
-            new SkillitoryRole
+            new AuthRole
             {
                 Id = 3,
                 Name = DataStoreConstants.OrganizationAdministratorRoleName,
@@ -64,7 +63,7 @@ public static class ModelBuilderExtensions
                 Description = "Users in this role can administrate the organizations that they're associated with.",
                 ConcurrencyStamp = Guid.NewGuid().ToString()
             },
-            new SkillitoryRole
+            new AuthRole
             {
                 Id = 4,
                 Name = DataStoreConstants.OrganizationViewerRoleName,
@@ -73,7 +72,7 @@ public static class ModelBuilderExtensions
                     "Users in this role can view the details and users of the organizations that they're associated with.",
                 ConcurrencyStamp = Guid.NewGuid().ToString()
             },
-            new SkillitoryRole
+            new AuthRole
             {
                 Id = 5,
                 Name = DataStoreConstants.UserRoleName,
@@ -84,46 +83,46 @@ public static class ModelBuilderExtensions
             }
         );
 
-        // builder.Entity<Organization>().HasData(
-        //     new Organization
-        //     {
-        //         OrganizationId = 1,
-        //         Name = "StaticSphere",
-        //         Description = "The organization that owns and developed Skillitory.",
-        //         OrganizationUniqueKey = Guid.NewGuid(),
-        //         IsSystemOrganization = true,
-        //         CreatedBy = 1,
-        //         CreatedOn = DateTime.UtcNow
-        //     }
-        // );
-        //
-        // builder.Entity<OrganizationChurnCategory>().HasData(
-        //     new OrganizationChurnCategory
-        //     {
-        //         OrganizationChurnCategoryId = 1,
-        //         Name = "Unhappy with Application",
-        //         Description = "The user has churned because they were unhappy with some element of the application."
-        //     },
-        //     new OrganizationChurnCategory
-        //     {
-        //         OrganizationChurnCategoryId = 2,
-        //         Name = "Unhappy with Service",
-        //         Description = "The user has churned because they were unhappy with service."
-        //     },
-        //     new OrganizationChurnCategory
-        //     {
-        //         OrganizationChurnCategoryId = 3,
-        //         Name = "No Longer Price Effective",
-        //         Description = "The user has churned because they no longer feel that the product is cost effective."
-        //     },
-        //     new OrganizationChurnCategory
-        //     {
-        //         OrganizationChurnCategoryId = 4,
-        //         Name = "Other",
-        //         Description =
-        //             "The user has churned for a reason other than that provided by the other churn options."
-        //     }
-        // );
+        builder.Entity<Organization>().HasData(
+            new Organization
+            {
+                OrganizationId = 1,
+                Name = "StaticSphere",
+                Description = "The organization that owns and developed Skillitory.",
+                OrganizationUniqueKey = Guid.NewGuid(),
+                IsSystemOrganization = true,
+                CreatedBy = 1,
+                CreatedDateTime = DateTime.UtcNow
+            }
+        );
+
+        builder.Entity<OrganizationChurnCategory>().HasData(
+            new OrganizationChurnCategory
+            {
+                OrganizationChurnCategoryId = 1,
+                Name = "Unhappy with Application",
+                Description = "The user has churned because they were unhappy with some element of the application."
+            },
+            new OrganizationChurnCategory
+            {
+                OrganizationChurnCategoryId = 2,
+                Name = "Unhappy with Service",
+                Description = "The user has churned because they were unhappy with service."
+            },
+            new OrganizationChurnCategory
+            {
+                OrganizationChurnCategoryId = 3,
+                Name = "No Longer Price Effective",
+                Description = "The user has churned because they no longer feel that the product is cost effective."
+            },
+            new OrganizationChurnCategory
+            {
+                OrganizationChurnCategoryId = 4,
+                Name = "Other",
+                Description =
+                    "The user has churned for a reason other than that provided by the other churn options."
+            }
+        );
 
         builder.Entity<OtpType>().HasData(
             Enum.GetValues<OtpTypeEnum>()

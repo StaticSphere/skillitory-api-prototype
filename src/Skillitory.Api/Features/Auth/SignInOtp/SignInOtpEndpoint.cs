@@ -9,12 +9,12 @@ namespace Skillitory.Api.Features.Auth.SignInOtp;
 
 public class SignInOtpEndpoint : AuthTokensEndpoint<SignInOtpCommand, Results<UnauthorizedHttpResult, Ok<AuthTokensResponse>>>
 {
-    private readonly UserManager<SkillitoryUser> _userManager;
+    private readonly UserManager<AuthUser> _userManager;
     private readonly IDateTimeService _dateTimeService;
     private readonly IAuditService _auditService;
 
     public SignInOtpEndpoint(
-        UserManager<SkillitoryUser> userManager,
+        UserManager<AuthUser> userManager,
         ITokenService tokenService,
         IAuditService auditService,
         IDateTimeService dateTimeService)

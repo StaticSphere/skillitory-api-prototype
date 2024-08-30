@@ -9,18 +9,18 @@ namespace Skillitory.Api.Features.Auth.Common;
 
 public abstract class AuthTokensEndpoint<TRequest, TResponse> : Endpoint<TRequest, TResponse> where TRequest : notnull
 {
-    private readonly UserManager<SkillitoryUser> _userManager;
+    private readonly UserManager<AuthUser> _userManager;
     private readonly ITokenService _tokenService;
 
     protected AuthTokensEndpoint(
-        UserManager<SkillitoryUser> userManager,
+        UserManager<AuthUser> userManager,
         ITokenService tokenService)
     {
         _userManager = userManager;
         _tokenService = tokenService;
     }
 
-    protected async Task<AuthTokensResponse> GenerateAuthTokensAsync(SkillitoryUser user, CancellationToken ct = default)
+    protected async Task<AuthTokensResponse> GenerateAuthTokensAsync(AuthUser user, CancellationToken ct = default)
     {
         var roles = await _userManager.GetRolesAsync(user);
         var claims = new List<Claim>

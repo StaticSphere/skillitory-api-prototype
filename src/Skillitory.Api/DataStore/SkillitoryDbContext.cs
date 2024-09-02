@@ -6,6 +6,7 @@ using Skillitory.Api.DataStore.Common;
 using Skillitory.Api.DataStore.Entities.Audit;
 using Skillitory.Api.DataStore.Entities.Auth;
 using Skillitory.Api.DataStore.Entities.Mbr;
+using Skillitory.Api.DataStore.Entities.Org;
 using Skillitory.Api.Services.Interfaces;
 
 namespace Skillitory.Api.DataStore;
@@ -22,6 +23,10 @@ public class SkillitoryDbContext : IdentityDbContext<AuthUser, AuthRole, int>, I
     public DbSet<AuditLogType> AuditLogTypes { get; set; } = null!;
     public DbSet<AuditLog> AuditLogs { get; set; } = null!;
     public DbSet<AuditLogMetaData> AuditLogMetaDatas { get; set; } = null!;
+    public DbSet<Organization> Organizations { get; set; } = null!;
+    public DbSet<OrganizationChurn> OrganizationChurns { get; set; } = null!;
+    public DbSet<OrganizationChurnCategory> OrganizationChurnCategories { get; set; } = null!;
+    public DbSet<Department> Departments { get; set; } = null!;
 
     public SkillitoryDbContext(
         DbContextOptions options,

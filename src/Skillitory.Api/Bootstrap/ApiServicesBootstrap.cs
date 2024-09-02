@@ -167,7 +167,7 @@ public static partial class ApiServicesBootstrap
         services.AddScoped<IPrincipalService, PrincipalService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddSingleton<IDateTimeService, DateTimeService>();
-        services.AddSingleton<IEmailService, EmailService>();
+        services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IAuditService, AuditService>();
         //services.AddSingleton<IFileService, DiskFileService>();
         //services.AddSingleton<IStoredImageService, StoredImageService>();

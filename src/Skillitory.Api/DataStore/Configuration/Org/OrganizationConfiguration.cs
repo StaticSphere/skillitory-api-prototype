@@ -15,6 +15,10 @@ public class OrganizationConfiguration : IEntityTypeConfiguration<Organization>
         builder.HasIndex(x => x.OrganizationUniqueKey)
             .IsUnique();
 
+        builder.Property(x => x.OrganizationUniqueKey)
+            .HasMaxLength(50)
+            .IsRequired();
+
         builder.Property(x => x.Name)
             .IsRequired()
             .HasMaxLength(200);

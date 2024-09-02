@@ -7,7 +7,7 @@ namespace Skillitory.Api.DataStore.Entities.Org;
 public class Organization : IAuditableEntity
 {
     public int OrganizationId { get; set; }
-    public Guid OrganizationUniqueKey { get; set; }
+    public string OrganizationUniqueKey { get; set; } = "";
     public string Name { get; set; } = "";
     public string? Description { get; set; }
     public string? Notes { get; set; }

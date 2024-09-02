@@ -20,7 +20,7 @@ public class EmailService : IEmailService
         CancellationToken cancellationToken = default)
     {
         var callbackUrl =
-            $"{UrlRoot}auth/validate-email?token={HttpUtility.UrlEncode(token)}";
+            $"{UrlRoot}auth/validate?token={HttpUtility.UrlEncode(token)}";
         await SendEmailInternalAsync(email, "Skillitory - Validate Skillitory Account", "ValidateSkillitoryAccount",
             new { callbackUrl }, cancellationToken);
     }

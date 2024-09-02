@@ -89,7 +89,7 @@ public static class ModelBuilderExtensions
                 OrganizationId = 1,
                 Name = "StaticSphere",
                 Description = "The organization that owns and developed Skillitory.",
-                OrganizationUniqueKey = Guid.NewGuid(),
+                OrganizationUniqueKey = new Cuid2().ToString(),
                 IsSystemOrganization = true,
                 CreatedBy = 1,
                 CreatedDateTime = DateTime.UtcNow

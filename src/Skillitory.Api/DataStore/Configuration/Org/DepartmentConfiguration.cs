@@ -15,6 +15,10 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
         builder.HasIndex(x => x.DepartmentUniqueKey)
             .IsUnique();
 
+        builder.Property(x => x.DepartmentUniqueKey)
+            .HasMaxLength(50)
+            .IsRequired();
+
         builder.Property(x => x.Name)
             .IsRequired()
             .HasMaxLength(200);

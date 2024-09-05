@@ -12,7 +12,7 @@ using Skillitory.Api.DataStore;
 namespace Skillitory.Api.DataStore.Migrations
 {
     [DbContext(typeof(SkillitoryDbContext))]
-    [Migration("20240902222132_InitialMigration")]
+    [Migration("20240904011031_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -311,7 +311,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "5b2fbfb5-ddf5-489c-b764-a9d9e05e098d",
+                            ConcurrencyStamp = "6f257491-8e2f-4fd2-89a3-a4954eba6b92",
                             Description = "Users in this role can read and write all Skillitory resources, including customer data.",
                             IsApplicationAdministratorRole = true,
                             Name = "Skillitory Administrator",
@@ -320,7 +320,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "43c814f6-031a-4e8c-ae1d-d50e43fcbe75",
+                            ConcurrencyStamp = "97adc0f9-ee1d-48a4-bfe8-748db7bd9076",
                             Description = "Users in this role can read all Skillitory resources, including customer data.",
                             IsApplicationAdministratorRole = true,
                             Name = "Skillitory Viewer",
@@ -329,7 +329,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "6abc7c66-d2f0-4cf3-8625-2caa47ccce77",
+                            ConcurrencyStamp = "f5949164-b2ab-47db-b5aa-201d85d239dc",
                             Description = "Users in this role can administrate the organizations that they're associated with.",
                             IsApplicationAdministratorRole = false,
                             Name = "Organization Administrator",
@@ -338,7 +338,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "966f444c-d96a-4da1-b9da-77f0913ad627",
+                            ConcurrencyStamp = "8f98cf98-8d8e-440c-b823-9cdf18faf717",
                             Description = "Users in this role can view the details and users of the organizations that they're associated with.",
                             IsApplicationAdministratorRole = false,
                             Name = "Organization Viewer",
@@ -347,7 +347,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 5,
-                            ConcurrencyStamp = "d452435b-3c59-432f-87a5-58a09dcbb8bb",
+                            ConcurrencyStamp = "6a913999-8e66-4fa1-8db7-e17e5b5dab0b",
                             Description = "Users in this role are standard users that can manage their own profile, skills, goals, etc.",
                             IsApplicationAdministratorRole = false,
                             Name = "User",
@@ -487,9 +487,9 @@ namespace Skillitory.Api.DataStore.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "b538c0a4-dbcf-41b6-9bf8-74703fff106c",
+                            ConcurrencyStamp = "4e1012b6-99de-449e-a710-df6b83ac7033",
                             CreatedBy = 1,
-                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 9, 2, 22, 21, 32, 346, DateTimeKind.Unspecified).AddTicks(4810), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 9, 4, 1, 10, 31, 541, DateTimeKind.Unspecified).AddTicks(9420), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "system_user@skillitory.com",
                             EmailConfirmed = false,
                             IsSignInAllowed = false,
@@ -501,7 +501,7 @@ namespace Skillitory.Api.DataStore.Migrations
                             SecurityStamp = "NEVER_GOING_TO_SIGN_IN",
                             TwoFactorEnabled = false,
                             UserName = "system_user@skillitory.com",
-                            UserUniqueKey = "oytja455mee8tsr2z3dlaaxx"
+                            UserUniqueKey = "uj487ioswg168oydfd70vpil"
                         });
                 });
 
@@ -827,12 +827,12 @@ namespace Skillitory.Api.DataStore.Migrations
                         {
                             OrganizationId = 1,
                             CreatedBy = 1,
-                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 9, 2, 22, 21, 32, 346, DateTimeKind.Unspecified).AddTicks(5000), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 9, 4, 1, 10, 31, 541, DateTimeKind.Unspecified).AddTicks(9610), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "The organization that owns and developed Skillitory.",
                             IsLogoOverrideAllowed = false,
                             IsSystemOrganization = true,
                             Name = "StaticSphere",
-                            OrganizationUniqueKey = "wcyalpb0f65pd3el8y2k8ois"
+                            OrganizationUniqueKey = "w9qbvo32wnwzo02kpzqd6hgx"
                         });
                 });
 

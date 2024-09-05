@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using Serilog;
 using Serilog.Events;
 using Skillitory.Api.Services.Interfaces;
 using ILogger = Serilog.ILogger;

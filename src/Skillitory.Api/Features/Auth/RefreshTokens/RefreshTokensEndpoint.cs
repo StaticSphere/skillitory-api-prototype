@@ -1,3 +1,4 @@
+using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Skillitory.Api.DataStore.Entities.Auth;
@@ -6,22 +7,24 @@ using Skillitory.Api.Services.Interfaces;
 
 namespace Skillitory.Api.Features.Auth.RefreshTokens;
 
-public class RefreshTokensEndpoint : AuthTokensEndpoint<RefreshTokensCommand, Results<UnauthorizedHttpResult, Ok<AuthTokensResponse>>>
+public class RefreshTokensEndpoint : Endpoint<RefreshTokensCommand, Results<UnauthorizedHttpResult, Ok<AuthTokensResponse>>>
 {
     private readonly UserManager<AuthUser> _userManager;
     private readonly IRefreshTokensDataService _refreshTokensDataService;
+    private readonly IAuthCommonService _authCommonService;
     private readonly ITokenService _tokenService;
     private readonly IDateTimeService _dateTimeService;
 
     public RefreshTokensEndpoint(
         UserManager<AuthUser> userManager,
         IRefreshTokensDataService refreshTokensDataService,
+        IAuthCommonService authCommonService,
         ITokenService tokenService,
         IDateTimeService dateTimeService)
-        : base(userManager, tokenService)
     {
         _userManager = userManager;
         _refreshTokensDataService = refreshTokensDataService;
+        _authCommonService = authCommonService;
         _tokenService = tokenService;
         _dateTimeService = dateTimeService;
     }
@@ -47,11 +50,13 @@ public class RefreshTokensEndpoint : AuthTokensEndpoint<RefreshTokensCommand, Re
         if (user is null || !user.IsSignInAllowed || user.TerminatedOn.HasValue)
             return TypedResults.Unauthorized();
 
-        var authTokenResponse = await GenerateAuthTokensAsync(user, ct);
+        var authTokenResponse = await _authCommonService.GenerateAuthTokensAsync(user, ct);
         dbRefreshToken.Token = authTokenResponse.RefreshToken;
         dbRefreshToken.ExpirationDateTime = authTokenResponse.RefreshTokenExpiration;
         dbRefreshToken.CreatedDateTime = _dateTimeService.UtcNow;
         await _refreshTokensDataService.UpdateUserRefreshTokenAsync(dbRefreshToken, ct);
+
+        _authCommonService.SetAuthCookies(authTokenResponse);
 
         return TypedResults.Ok(authTokenResponse);
     }

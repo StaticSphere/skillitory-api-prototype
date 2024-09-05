@@ -12,6 +12,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Skillitory.Api.DataStore;
 using Skillitory.Api.DataStore.Entities.Auth;
+using Skillitory.Api.Features.Auth.Common;
 using Skillitory.Api.Models.Configuration;
 using Skillitory.Api.Services;
 using Skillitory.Api.Services.Interfaces;
@@ -165,6 +166,7 @@ public static partial class ApiServicesBootstrap
         services.AddSwaggerGen();
 
         services.AddScoped<IPrincipalService, PrincipalService>();
+        services.AddScoped<IAuthCommonService, AuthCommonService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddSingleton<IDateTimeService, DateTimeService>();
         services.AddScoped<IEmailService, EmailService>();

@@ -14,6 +14,6 @@ public class RegisterUserDataService : IRegisterUserDataService
 
     public async Task<bool> GetOrganizationExistsAsync(string organization, CancellationToken cancellationToken = default)
     {
-        return await _dbContext.Organizations.AnyAsync(x => x.Name == organization, cancellationToken);
+        return await _dbContext.Organizations.AnyAsync(x => x.Name.ToLower() == organization.ToLower(), cancellationToken);
     }
 }

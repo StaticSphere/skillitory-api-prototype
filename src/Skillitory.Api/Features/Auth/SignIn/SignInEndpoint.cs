@@ -1,39 +1,33 @@
+using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
 using Skillitory.Api.DataStore.Common.Enumerations;
 using Skillitory.Api.DataStore.Entities.Auth;
 using Skillitory.Api.Features.Auth.Common;
-using Skillitory.Api.Models.Configuration;
 using Skillitory.Api.Services.Interfaces;
 
 namespace Skillitory.Api.Features.Auth.SignIn;
 
-public class SignInEndpoint : AuthTokensEndpoint<SignInCommand, Results<UnauthorizedHttpResult, Ok<AuthTokensResponse>, Ok<int>, Ok>>
+public class SignInEndpoint : Endpoint<SignInCommand, Results<UnauthorizedHttpResult, Ok<AuthTokensResponse>, Ok<int>, Ok>>
 {
     private readonly UserManager<AuthUser> _userManager;
+    private readonly IAuthCommonService _authCommonService;
     private readonly IDateTimeService _dateTimeService;
     private readonly IEmailService _emailService;
-    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IAuditService _auditService;
-    private readonly SecurityConfiguration _securityConfiguration;
 
     public SignInEndpoint(
         UserManager<AuthUser> userManager,
-        ITokenService tokenService,
+        IAuthCommonService authCommonService,
         IDateTimeService dateTimeService,
         IEmailService emailService,
-        IHttpContextAccessor httpContextAccessor,
-        IAuditService auditService,
-        IOptions<SecurityConfiguration> securityConfiguration)
-    : base(userManager, tokenService)
+        IAuditService auditService)
     {
         _userManager = userManager;
+        _authCommonService = authCommonService;
         _dateTimeService = dateTimeService;
         _emailService = emailService;
-        _httpContextAccessor = httpContextAccessor;
         _auditService = auditService;
-        _securityConfiguration = securityConfiguration.Value;
     }
 
     public override void Configure()
@@ -62,7 +56,7 @@ public class SignInEndpoint : AuthTokensEndpoint<SignInCommand, Results<Unauthor
             return TypedResults.Ok((int)user.OtpTypeId!);
         }
 
-        var authTokenResponse = await GenerateAuthTokensAsync(user, ct);
+        var authTokenResponse = await _authCommonService.GenerateAuthTokensAsync(user, ct);
         var userRefreshToken = new UserRefreshToken
         {
             Token = authTokenResponse.RefreshToken,
@@ -76,31 +70,7 @@ public class SignInEndpoint : AuthTokensEndpoint<SignInCommand, Results<Unauthor
 
         if (!req.UseCookies) return TypedResults.Ok(authTokenResponse);
 
-        _httpContextAccessor.HttpContext!.Response.Cookies.Append(
-            _securityConfiguration.AccessCookieName,
-            authTokenResponse.AccessToken,
-            new CookieOptions
-            {
-                Expires = authTokenResponse.RefreshTokenExpiration,
-                Domain = _securityConfiguration.AuthCookieDomain,
-                Path = "/",
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
-            });
-
-        _httpContextAccessor.HttpContext!.Response.Cookies.Append(
-            _securityConfiguration.RefreshCookieName,
-            authTokenResponse.RefreshToken,
-            new CookieOptions
-            {
-                Expires = authTokenResponse.RefreshTokenExpiration,
-                Domain = _securityConfiguration.AuthCookieDomain,
-                Path = "/",
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
-            });
+        _authCommonService.SetAuthCookies(authTokenResponse, req.PersistedSignIn);
 
         return TypedResults.Ok();
     }

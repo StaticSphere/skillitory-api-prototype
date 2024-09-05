@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 using Skillitory.Api.Services.Interfaces;
 
 namespace Skillitory.Api.Features.Auth.SignOutAllDevices;

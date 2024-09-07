@@ -31,6 +31,14 @@ public class EmailService : IEmailService
             cancellationToken);
     }
 
+    public async Task SendResetPasswordEmailAsync(string email, string token, CancellationToken cancellationToken = default)
+    {
+        var callbackUrl =
+            $"{UrlRoot}auth/reset-password?token={HttpUtility.UrlEncode(token)}";
+        await SendEmailInternalAsync(email, "Skillitory - Forgot Password", "ForgotPassword", new { email, callbackUrl },
+            cancellationToken);
+    }
+
     internal string UrlRoot =>
         _configuration["WebAppUrl"]!.Trim('/', '\\') + "/";
 

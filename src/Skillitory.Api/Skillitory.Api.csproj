@@ -41,6 +41,8 @@
       <EmbeddedResource Include="Resources\EmailTemplates\ValidateSkillitoryAccount.liquid" />
       <None Remove="Resources\EmailTemplates\SignInOTP.liquid" />
       <EmbeddedResource Include="Resources\EmailTemplates\SignInOtp.liquid" />
+      <None Remove="Resources\EmailTemplates\ForgotPassword.liquid" />
+      <EmbeddedResource Include="Resources\EmailTemplates\ForgotPassword.liquid" />
     </ItemGroup>
 
 </Project>

@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using Asp.Versioning;
 using FastEndpoints;
@@ -13,6 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using Skillitory.Api.DataStore;
 using Skillitory.Api.DataStore.Entities.Auth;
 using Skillitory.Api.Features.Auth.Common;
+using Skillitory.Api.Models;
 using Skillitory.Api.Models.Configuration;
 using Skillitory.Api.Services;
 using Skillitory.Api.Services.Interfaces;
@@ -70,26 +72,18 @@ public static partial class ApiServicesBootstrap
                     ValidateIssuerSigningKey = true
                 };
 
-                // x.Events = new JwtBearerEvents
-                // {
-                //     OnMessageReceived = context =>
-                //     {
-                //         if (!context.Request.Cookies.TryGetValue(securitySettings.AccessCookieName, out var authCookie))
-                //             return Task.CompletedTask;
-                //
-                //         try
-                //         {
-                //             var tokenData = JsonSerializer.Deserialize<TokenData>(authCookie);
-                //             context.Token = tokenData!.AccessToken;
-                //         }
-                //         catch (JsonException)
-                //         {
-                //             // Ignore; just assume that the caller is not authenticated
-                //         }
-                //
-                //         return Task.CompletedTask;
-                //     }
-                // };
+                x.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        if (!context.Request.Cookies.TryGetValue(securitySettings.AccessCookieName, out var authCookie))
+                            return Task.CompletedTask;
+
+                        context.Token = authCookie;
+
+                        return Task.CompletedTask;
+                    }
+                };
             });
 
         services.AddAuthorization();

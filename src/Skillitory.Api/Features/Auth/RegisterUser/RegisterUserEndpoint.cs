@@ -2,6 +2,7 @@ using System.Net;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
+using Skillitory.Api.DataStore;
 using Skillitory.Api.DataStore.Common.Enumerations;
 using Skillitory.Api.DataStore.Entities.Auth;
 using Skillitory.Api.DataStore.Entities.Mbr;
@@ -78,6 +79,8 @@ public class RegisterUserEndpoint : Endpoint<RegisterUserCommand, Results<NoCont
 
             return TypedResults.StatusCode((int)HttpStatusCode.InternalServerError);
         }
+
+        await _userManager.AddToRoleAsync(user, DataStoreConstants.OrganizationAdministratorRoleName);
 
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
         await _emailService.SendEmailConfirmationEmailAsync(user.Email, token, ct);

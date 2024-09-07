@@ -20,7 +20,7 @@ public class PrincipalService : IPrincipalService
     public string UserUniqueKey =>
         CurrentClaimsPrincipal is null
             ? throw new MissingClaimsPrincipalException()
-            : CurrentClaimsPrincipal.FindFirst(JwtRegisteredClaimNames.Sub)?.Value ?? throw new MissingClaimsPrincipalException();
+            : CurrentClaimsPrincipal.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new MissingClaimsPrincipalException();
 
     public bool IsAuthenticated => CurrentClaimsPrincipal?.Identity?.IsAuthenticated ?? false;
 

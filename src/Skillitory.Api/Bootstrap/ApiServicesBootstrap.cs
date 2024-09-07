@@ -13,7 +13,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Skillitory.Api.DataStore;
 using Skillitory.Api.DataStore.Entities.Auth;
-using Skillitory.Api.Features.Auth.Common;
+using Skillitory.Api.Endpoints.Auth.Common;
 using Skillitory.Api.Models;
 using Skillitory.Api.Models.Configuration;
 using Skillitory.Api.Services;

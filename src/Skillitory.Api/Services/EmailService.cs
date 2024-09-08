@@ -35,7 +35,7 @@ public class EmailService : IEmailService
     {
         var callbackUrl =
             $"{UrlRoot}auth/reset-password?token={HttpUtility.UrlEncode(token)}";
-        await SendEmailInternalAsync(email, "Skillitory - Forgot Password", "ForgotPassword", new { email, callbackUrl },
+        await SendEmailInternalAsync(email, "Skillitory - Forgot Password", "ForgotPassword", new { callbackUrl },
             cancellationToken);
     }
 

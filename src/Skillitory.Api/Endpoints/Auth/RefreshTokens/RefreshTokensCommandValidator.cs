@@ -8,9 +8,11 @@ public class RefreshTokensCommandValidator : Validator<RefreshTokensCommand>
     public RefreshTokensCommandValidator()
     {
         RuleFor(x => x.AccessToken)
-            .NotEmpty();
+            .NotEmpty()
+            .When(x => !x.UseCookies);
 
         RuleFor(x => x.RefreshToken)
-            .NotEmpty();
+            .NotEmpty()
+            .When(x => !x.UseCookies);
     }
 }

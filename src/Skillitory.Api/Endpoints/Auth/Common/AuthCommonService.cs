@@ -43,6 +43,7 @@ public class AuthCommonService : IAuthCommonService
         {
             AccessToken = tokens.AccessToken,
             RefreshToken = tokens.RefreshToken,
+            AccessTokenExpiration = tokens.AccessTokenExpiration,
             RefreshTokenExpiration = tokens.RefreshTokenExpiration
         };
     }
@@ -57,7 +58,7 @@ public class AuthCommonService : IAuthCommonService
             authTokensResponse.AccessToken,
             new CookieOptions
             {
-                Expires = persistedSignIn.Value ? authTokensResponse.RefreshTokenExpiration : null,
+                Expires = persistedSignIn.Value ? authTokensResponse.AccessTokenExpiration : null,
                 Domain = _securityConfiguration.AuthCookieDomain,
                 Path = "/",
                 HttpOnly = true,

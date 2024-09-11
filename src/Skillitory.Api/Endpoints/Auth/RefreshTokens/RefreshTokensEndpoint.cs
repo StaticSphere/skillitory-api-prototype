@@ -1,8 +1,10 @@
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using Skillitory.Api.DataStore.Entities.Auth;
 using Skillitory.Api.Endpoints.Auth.Common;
+using Skillitory.Api.Models.Configuration;
 using Skillitory.Api.Services.Interfaces;
 
 namespace Skillitory.Api.Endpoints.Auth.RefreshTokens;
@@ -14,19 +16,25 @@ public class RefreshTokensEndpoint : Endpoint<RefreshTokensCommand, Results<Unau
     private readonly IAuthCommonService _authCommonService;
     private readonly ITokenService _tokenService;
     private readonly IDateTimeService _dateTimeService;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly SecurityConfiguration _securityConfiguration;
 
     public RefreshTokensEndpoint(
         UserManager<AuthUser> userManager,
         IRefreshTokensDataService refreshTokensDataService,
         IAuthCommonService authCommonService,
         ITokenService tokenService,
-        IDateTimeService dateTimeService)
+        IDateTimeService dateTimeService,
+        IHttpContextAccessor httpContextAccessor,
+        IOptions<SecurityConfiguration> securityConfiguration)
     {
         _userManager = userManager;
         _refreshTokensDataService = refreshTokensDataService;
         _authCommonService = authCommonService;
         _tokenService = tokenService;
         _dateTimeService = dateTimeService;
+        _httpContextAccessor = httpContextAccessor;
+        _securityConfiguration = securityConfiguration.Value;
     }
 
     public override void Configure()
@@ -37,12 +45,24 @@ public class RefreshTokensEndpoint : Endpoint<RefreshTokensCommand, Results<Unau
 
     public override async Task<Results<UnauthorizedHttpResult, Ok<AuthTokensResponse>>> ExecuteAsync(RefreshTokensCommand req, CancellationToken ct)
     {
-        var principal = _tokenService.GetClaimsPrincipalFromAccessToken(req.AccessToken);
+        var accessToken = req.AccessToken;
+        var refreshToken = req.RefreshToken;
+
+        if (req.UseCookies)
+        {
+            if (!_httpContextAccessor.HttpContext!.Request.Cookies.ContainsKey(_securityConfiguration.AccessCookieName))
+                return TypedResults.Unauthorized();
+
+            accessToken = _httpContextAccessor.HttpContext!.Request.Cookies[_securityConfiguration.AccessCookieName];
+            refreshToken = _httpContextAccessor.HttpContext!.Request.Cookies[_securityConfiguration.RefreshCookieName];
+        }
+
+        var principal = _tokenService.GetClaimsPrincipalFromAccessToken(accessToken!);
         if (principal is null)
             return TypedResults.Unauthorized();
 
         var email = principal.Identity!.Name;
-        var dbRefreshToken = await _refreshTokensDataService.GetUserRefreshTokenAsync(email!, req.RefreshToken, ct);
+        var dbRefreshToken = await _refreshTokensDataService.GetUserRefreshTokenAsync(email!, refreshToken!, ct);
         if (dbRefreshToken is null || dbRefreshToken.ExpirationDateTime <= _dateTimeService.UtcNow)
             return TypedResults.Unauthorized();
 

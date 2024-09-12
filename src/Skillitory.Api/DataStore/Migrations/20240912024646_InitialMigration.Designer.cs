@@ -12,7 +12,7 @@ using Skillitory.Api.DataStore;
 namespace Skillitory.Api.DataStore.Migrations
 {
     [DbContext(typeof(SkillitoryDbContext))]
-    [Migration("20240907035807_InitialMigration")]
+    [Migration("20240912024646_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -311,7 +311,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "3cde4d55-3e4e-4b05-8442-3b58cb7a315d",
+                            ConcurrencyStamp = "79c49f07-0c9b-48ee-a4fd-8ab22c6acaad",
                             Description = "Users in this role can read and write all Skillitory resources, including customer data.",
                             IsApplicationAdministratorRole = true,
                             Name = "Skillitory Administrator",
@@ -320,7 +320,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "8958ff3a-2951-4fea-935c-9a1acd56bd34",
+                            ConcurrencyStamp = "b14942c6-961f-4c92-9aed-2a6a575154be",
                             Description = "Users in this role can read all Skillitory resources, including customer data.",
                             IsApplicationAdministratorRole = true,
                             Name = "Skillitory Viewer",
@@ -329,7 +329,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "c25b31f6-ca53-4d15-b9bf-2d26bab78e4c",
+                            ConcurrencyStamp = "fa81d3db-b0d7-4054-8aa9-ae397e530762",
                             Description = "Users in this role can administrate the organizations that they're associated with.",
                             IsApplicationAdministratorRole = false,
                             Name = "Organization Administrator",
@@ -338,7 +338,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "569fa540-e225-4b4f-9004-0a033f9bfab0",
+                            ConcurrencyStamp = "346a70fa-a246-4614-8f92-c18e701e0250",
                             Description = "Users in this role can view the details and users of the organizations that they're associated with.",
                             IsApplicationAdministratorRole = false,
                             Name = "Organization Viewer",
@@ -347,7 +347,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 5,
-                            ConcurrencyStamp = "1cdaa904-7e5f-4b46-8bb9-2783c409319a",
+                            ConcurrencyStamp = "b694c902-ef56-4d71-8182-1fbd7beac6e6",
                             Description = "Users in this role are standard users that can manage their own profile, skills, goals, etc.",
                             IsApplicationAdministratorRole = false,
                             Name = "User",
@@ -398,6 +398,10 @@ namespace Skillitory.Api.DataStore.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_system_user");
 
+                    b.Property<DateTimeOffset>("LastPasswordChangedDateTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_password_changed_date_time");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean")
                         .HasColumnName("lockout_enabled");
@@ -419,6 +423,10 @@ namespace Skillitory.Api.DataStore.Migrations
                     b.Property<int?>("OtpTypeId")
                         .HasColumnType("integer")
                         .HasColumnName("otp_type_id");
+
+                    b.Property<DateTimeOffset>("PasswordExpirationDateTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("password_expiration_date_time");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("text")
@@ -487,21 +495,23 @@ namespace Skillitory.Api.DataStore.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c3e9a6b6-0708-480e-94f6-60e18e08b3f5",
+                            ConcurrencyStamp = "2456d767-b6c5-4cd9-a1a3-13c8da886a3a",
                             CreatedBy = 1,
-                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 9, 7, 3, 58, 7, 486, DateTimeKind.Unspecified).AddTicks(3620), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 9, 12, 2, 46, 46, 255, DateTimeKind.Unspecified).AddTicks(8840), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "system_user@skillitory.com",
                             EmailConfirmed = false,
                             IsSignInAllowed = false,
                             IsSystemUser = true,
+                            LastPasswordChangedDateTime = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             LockoutEnabled = false,
                             NormalizedEmail = "SYSTEM_USER@SKILLITORY.COM",
                             NormalizedUserName = "SYSTEM_USER@SKILLITORY.COM",
+                            PasswordExpirationDateTime = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "NEVER_GOING_TO_SIGN_IN",
                             TwoFactorEnabled = false,
                             UserName = "system_user@skillitory.com",
-                            UserUniqueKey = "d111ty1aetvmf32e9dnw4g1u"
+                            UserUniqueKey = "ei4gr8aqzb0utfb0fgnr3ssk"
                         });
                 });
 
@@ -535,7 +545,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Auth.UserRefreshToken", b =>
+            modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Auth.PasswordHistory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -543,6 +553,36 @@ namespace Skillitory.Api.DataStore.Migrations
                         .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedDateTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_date_time");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("password_hash");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_password_history");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_password_history_user_id");
+
+                    b.ToTable("password_history", "auth");
+                });
+
+            modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Auth.UserRefreshToken", b =>
+                {
+                    b.Property<string>("Jti")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("jti");
 
                     b.Property<DateTimeOffset>("CreatedDateTime")
                         .HasColumnType("timestamp with time zone")
@@ -562,11 +602,15 @@ namespace Skillitory.Api.DataStore.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("user_id");
 
-                    b.HasKey("Id")
+                    b.HasKey("Jti")
                         .HasName("pk_user_refresh_token");
 
                     b.HasIndex("UserId")
                         .HasDatabaseName("ix_user_refresh_token_user_id");
+
+                    b.HasIndex("Jti", "UserId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_user_refresh_token_jti_user_id");
 
                     b.ToTable("user_refresh_token", "auth");
                 });
@@ -791,6 +835,14 @@ namespace Skillitory.Api.DataStore.Migrations
                         .HasColumnType("character varying(50)")
                         .HasColumnName("organization_unique_key");
 
+                    b.Property<int?>("PasswordLifetimeDays")
+                        .HasColumnType("integer")
+                        .HasColumnName("password_lifetime_days");
+
+                    b.Property<int?>("PreviousTrackedPasswordCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("previous_tracked_password_count");
+
                     b.Property<DateOnly?>("TrialPeriodEndsOn")
                         .HasColumnType("date")
                         .HasColumnName("trial_period_ends_on");
@@ -827,12 +879,12 @@ namespace Skillitory.Api.DataStore.Migrations
                         {
                             OrganizationId = 1,
                             CreatedBy = 1,
-                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 9, 7, 3, 58, 7, 486, DateTimeKind.Unspecified).AddTicks(3890), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 9, 12, 2, 46, 46, 255, DateTimeKind.Unspecified).AddTicks(9020), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "The organization that owns and developed Skillitory.",
                             IsLogoOverrideAllowed = false,
                             IsSystemOrganization = true,
                             Name = "StaticSphere",
-                            OrganizationUniqueKey = "yrgz29agbh3qrycras9z9w9b"
+                            OrganizationUniqueKey = "jbtp2mdwu81xu4pj4c4giw07"
                         });
                 });
 
@@ -1043,6 +1095,18 @@ namespace Skillitory.Api.DataStore.Migrations
                     b.Navigation("OtpType");
                 });
 
+            modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Auth.PasswordHistory", b =>
+                {
+                    b.HasOne("Skillitory.Api.DataStore.Entities.Auth.AuthUser", "User")
+                        .WithMany("PasswordHistories")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_password_history_users_user_id");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Auth.UserRefreshToken", b =>
                 {
                     b.HasOne("Skillitory.Api.DataStore.Entities.Auth.AuthUser", "User")
@@ -1159,6 +1223,8 @@ namespace Skillitory.Api.DataStore.Migrations
             modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Auth.AuthUser", b =>
                 {
                     b.Navigation("Member");
+
+                    b.Navigation("PasswordHistories");
 
                     b.Navigation("RefreshTokens");
                 });

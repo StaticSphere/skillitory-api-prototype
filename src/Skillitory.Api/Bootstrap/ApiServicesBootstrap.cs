@@ -1,7 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using Asp.Versioning;
 using FastEndpoints;
@@ -13,8 +12,6 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Skillitory.Api.DataStore;
 using Skillitory.Api.DataStore.Entities.Auth;
-using Skillitory.Api.Endpoints.Auth.Common;
-using Skillitory.Api.Models;
 using Skillitory.Api.Models.Configuration;
 using Skillitory.Api.Services;
 using Skillitory.Api.Services.Interfaces;
@@ -160,7 +157,7 @@ public static partial class ApiServicesBootstrap
         services.AddSwaggerGen();
 
         services.AddScoped<IPrincipalService, PrincipalService>();
-        services.AddScoped<IAuthCommonService, AuthCommonService>();
+        //services.AddScoped<IAuthCommonService, AuthCommonService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddSingleton<IDateTimeService, DateTimeService>();
         services.AddScoped<IEmailService, EmailService>();

@@ -9,7 +9,14 @@ public class UserRefreshTokenConfiguration : IEntityTypeConfiguration<UserRefres
     public void Configure(EntityTypeBuilder<UserRefreshToken> builder)
     {
         builder.ToTable("user_refresh_token", "auth");
-        builder.HasKey(x => x.Id);
+        builder.HasKey(x => x.Jti);
+
+        builder.HasIndex(x => new { x.Jti, x.UserId})
+            .IsUnique();
+
+        builder.Property(x => x.Jti)
+            .HasMaxLength(40)
+            .IsRequired();
 
         builder.Property(x => x.Token)
             .HasMaxLength(100)
@@ -17,6 +24,7 @@ public class UserRefreshTokenConfiguration : IEntityTypeConfiguration<UserRefres
 
         builder.HasOne(x => x.User)
             .WithMany(x => x.RefreshTokens)
-            .HasForeignKey(x => x.UserId);
+            .HasForeignKey(x => x.UserId)
+            .IsRequired();
     }
 }

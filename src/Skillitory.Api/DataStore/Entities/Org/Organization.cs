@@ -15,6 +15,8 @@ public class Organization : IAuditableEntity
     public int? LogoStoredFileId { get; set; }
     public bool IsLogoOverrideAllowed { get; set; }
     public bool IsSystemOrganization { get; set; }
+    public int? PreviousTrackedPasswordCount { get; init; }
+    public int? PasswordLifetimeDays { get; init; }
     public DateOnly? TrialPeriodEndsOn { get; set; }
 
     public ICollection<Department> Departments { get; set; } = null!;

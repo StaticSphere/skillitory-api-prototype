@@ -1,12 +1,11 @@
 namespace Skillitory.Api.DataStore.Entities.Auth;
 
-public class UserRefreshToken
+public class PasswordHistory
 {
-    public string Jti { get; set; } = "";
+    public int Id { get; set; }
     public int UserId { get; set; }
-    public string Token { get; set; } = "";
+    public string PasswordHash { get; set; } = "";
     public DateTimeOffset CreatedDateTime { get; set; }
-    public DateTimeOffset ExpirationDateTime { get; set; }
 
     public AuthUser User { get; set; } = null!;
 }

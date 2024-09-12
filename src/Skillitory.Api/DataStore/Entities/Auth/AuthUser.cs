@@ -13,11 +13,14 @@ public class AuthUser : IdentityUser<int>, IAuditableEntity
     public DateTimeOffset? TerminatedOn { get; set; }
     public OtpTypeEnum? OtpTypeId { get; set; }
     public OtpType? OtpType { get; set; }
-    public ICollection<UserRefreshToken> RefreshTokens { get; set; } = new List<UserRefreshToken>();
+    public DateTimeOffset LastPasswordChangedDateTime { get; set; }
+    public DateTimeOffset PasswordExpirationDateTime { get; set; }
     public int CreatedBy { get; set; }
     public DateTimeOffset CreatedDateTime { get; set; }
     public int? UpdatedBy { get; set; }
     public DateTimeOffset? UpdatedDateTime { get; set; }
 
     public Member? Member { get; set; } = null!;
+    public ICollection<UserRefreshToken> RefreshTokens { get; set; } = new List<UserRefreshToken>();
+    public ICollection<PasswordHistory> PasswordHistories { get; set; } = new List<PasswordHistory>();
 }

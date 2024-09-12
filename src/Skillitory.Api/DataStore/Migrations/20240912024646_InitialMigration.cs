@@ -97,6 +97,8 @@ namespace Skillitory.Api.DataStore.Migrations
                     is_system_user = table.Column<bool>(type: "boolean", nullable: false),
                     terminated_on = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     otp_type_id = table.Column<int>(type: "integer", nullable: true),
+                    last_password_changed_date_time = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    password_expiration_date_time = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     created_by = table.Column<int>(type: "integer", nullable: false),
                     created_date_time = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     updated_by = table.Column<int>(type: "integer", nullable: true),
@@ -195,6 +197,8 @@ namespace Skillitory.Api.DataStore.Migrations
                     logo_stored_file_id = table.Column<int>(type: "integer", nullable: true),
                     is_logo_override_allowed = table.Column<bool>(type: "boolean", nullable: false),
                     is_system_organization = table.Column<bool>(type: "boolean", nullable: false),
+                    previous_tracked_password_count = table.Column<int>(type: "integer", nullable: true),
+                    password_lifetime_days = table.Column<int>(type: "integer", nullable: true),
                     trial_period_ends_on = table.Column<DateOnly>(type: "date", nullable: true),
                     created_by = table.Column<int>(type: "integer", nullable: false),
                     created_date_time = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -217,6 +221,29 @@ namespace Skillitory.Api.DataStore.Migrations
                         principalSchema: "auth",
                         principalTable: "user",
                         principalColumn: "id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "password_history",
+                schema: "auth",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    user_id = table.Column<int>(type: "integer", nullable: false),
+                    password_hash = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    created_date_time = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_password_history", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_password_history_users_user_id",
+                        column: x => x.user_id,
+                        principalSchema: "auth",
+                        principalTable: "user",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -269,8 +296,7 @@ namespace Skillitory.Api.DataStore.Migrations
                 schema: "auth",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    jti = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
                     user_id = table.Column<int>(type: "integer", nullable: false),
                     token = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     created_date_time = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -278,7 +304,7 @@ namespace Skillitory.Api.DataStore.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_user_refresh_token", x => x.id);
+                    table.PrimaryKey("pk_user_refresh_token", x => x.jti);
                     table.ForeignKey(
                         name: "fk_user_refresh_token_user_user_id",
                         column: x => x.user_id,
@@ -531,24 +557,24 @@ namespace Skillitory.Api.DataStore.Migrations
                 columns: new[] { "id", "concurrency_stamp", "description", "is_application_administrator_role", "name", "normalized_name" },
                 values: new object[,]
                 {
-                    { 1, "3cde4d55-3e4e-4b05-8442-3b58cb7a315d", "Users in this role can read and write all Skillitory resources, including customer data.", true, "Skillitory Administrator", "SKILLITORY ADMINISTRATOR" },
-                    { 2, "8958ff3a-2951-4fea-935c-9a1acd56bd34", "Users in this role can read all Skillitory resources, including customer data.", true, "Skillitory Viewer", "SKILLITORY VIEWER" },
-                    { 3, "c25b31f6-ca53-4d15-b9bf-2d26bab78e4c", "Users in this role can administrate the organizations that they're associated with.", false, "Organization Administrator", "ORGANIZATION ADMINISTRATOR" },
-                    { 4, "569fa540-e225-4b4f-9004-0a033f9bfab0", "Users in this role can view the details and users of the organizations that they're associated with.", false, "Organization Viewer", "ORGANIZATION VIEWER" },
-                    { 5, "1cdaa904-7e5f-4b46-8bb9-2783c409319a", "Users in this role are standard users that can manage their own profile, skills, goals, etc.", false, "User", "USER" }
+                    { 1, "79c49f07-0c9b-48ee-a4fd-8ab22c6acaad", "Users in this role can read and write all Skillitory resources, including customer data.", true, "Skillitory Administrator", "SKILLITORY ADMINISTRATOR" },
+                    { 2, "b14942c6-961f-4c92-9aed-2a6a575154be", "Users in this role can read all Skillitory resources, including customer data.", true, "Skillitory Viewer", "SKILLITORY VIEWER" },
+                    { 3, "fa81d3db-b0d7-4054-8aa9-ae397e530762", "Users in this role can administrate the organizations that they're associated with.", false, "Organization Administrator", "ORGANIZATION ADMINISTRATOR" },
+                    { 4, "346a70fa-a246-4614-8f92-c18e701e0250", "Users in this role can view the details and users of the organizations that they're associated with.", false, "Organization Viewer", "ORGANIZATION VIEWER" },
+                    { 5, "b694c902-ef56-4d71-8182-1fbd7beac6e6", "Users in this role are standard users that can manage their own profile, skills, goals, etc.", false, "User", "USER" }
                 });
 
             migrationBuilder.InsertData(
                 schema: "auth",
                 table: "user",
-                columns: new[] { "id", "access_failed_count", "concurrency_stamp", "created_by", "created_date_time", "email", "email_confirmed", "is_sign_in_allowed", "is_system_user", "lockout_enabled", "lockout_end", "normalized_email", "normalized_user_name", "otp_type_id", "password_hash", "phone_number", "phone_number_confirmed", "security_stamp", "terminated_on", "two_factor_enabled", "updated_by", "updated_date_time", "user_name", "user_unique_key" },
-                values: new object[] { 1, 0, "c3e9a6b6-0708-480e-94f6-60e18e08b3f5", 1, new DateTimeOffset(new DateTime(2024, 9, 7, 3, 58, 7, 486, DateTimeKind.Unspecified).AddTicks(3620), new TimeSpan(0, 0, 0, 0, 0)), "system_user@skillitory.com", false, false, true, false, null, "SYSTEM_USER@SKILLITORY.COM", "SYSTEM_USER@SKILLITORY.COM", null, null, null, false, "NEVER_GOING_TO_SIGN_IN", null, false, null, null, "system_user@skillitory.com", "d111ty1aetvmf32e9dnw4g1u" });
+                columns: new[] { "id", "access_failed_count", "concurrency_stamp", "created_by", "created_date_time", "email", "email_confirmed", "is_sign_in_allowed", "is_system_user", "last_password_changed_date_time", "lockout_enabled", "lockout_end", "normalized_email", "normalized_user_name", "otp_type_id", "password_expiration_date_time", "password_hash", "phone_number", "phone_number_confirmed", "security_stamp", "terminated_on", "two_factor_enabled", "updated_by", "updated_date_time", "user_name", "user_unique_key" },
+                values: new object[] { 1, 0, "2456d767-b6c5-4cd9-a1a3-13c8da886a3a", 1, new DateTimeOffset(new DateTime(2024, 9, 12, 2, 46, 46, 255, DateTimeKind.Unspecified).AddTicks(8840), new TimeSpan(0, 0, 0, 0, 0)), "system_user@skillitory.com", false, false, true, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), false, null, "SYSTEM_USER@SKILLITORY.COM", "SYSTEM_USER@SKILLITORY.COM", null, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), null, null, false, "NEVER_GOING_TO_SIGN_IN", null, false, null, null, "system_user@skillitory.com", "ei4gr8aqzb0utfb0fgnr3ssk" });
 
             migrationBuilder.InsertData(
                 schema: "org",
                 table: "organization",
-                columns: new[] { "organization_id", "created_by", "created_date_time", "description", "external_id_name", "is_logo_override_allowed", "is_system_organization", "logo_stored_file_id", "name", "notes", "organization_unique_key", "trial_period_ends_on", "updated_by", "updated_date_time" },
-                values: new object[] { 1, 1, new DateTimeOffset(new DateTime(2024, 9, 7, 3, 58, 7, 486, DateTimeKind.Unspecified).AddTicks(3890), new TimeSpan(0, 0, 0, 0, 0)), "The organization that owns and developed Skillitory.", null, false, true, null, "StaticSphere", null, "yrgz29agbh3qrycras9z9w9b", null, null, null });
+                columns: new[] { "organization_id", "created_by", "created_date_time", "description", "external_id_name", "is_logo_override_allowed", "is_system_organization", "logo_stored_file_id", "name", "notes", "organization_unique_key", "password_lifetime_days", "previous_tracked_password_count", "trial_period_ends_on", "updated_by", "updated_date_time" },
+                values: new object[] { 1, 1, new DateTimeOffset(new DateTime(2024, 9, 12, 2, 46, 46, 255, DateTimeKind.Unspecified).AddTicks(9020), new TimeSpan(0, 0, 0, 0, 0)), "The organization that owns and developed Skillitory.", null, false, true, null, "StaticSphere", null, "jbtp2mdwu81xu4pj4c4giw07", null, null, null, null, null });
 
             migrationBuilder.CreateIndex(
                 name: "ix_audit_log_audit_log_type_id",
@@ -651,6 +677,12 @@ namespace Skillitory.Api.DataStore.Migrations
                 column: "organization_id");
 
             migrationBuilder.CreateIndex(
+                name: "ix_password_history_user_id",
+                schema: "auth",
+                table: "password_history",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
                 schema: "auth",
                 table: "role",
@@ -702,6 +734,13 @@ namespace Skillitory.Api.DataStore.Migrations
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
+                name: "ix_user_refresh_token_jti_user_id",
+                schema: "auth",
+                table: "user_refresh_token",
+                columns: new[] { "jti", "user_id" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "ix_user_refresh_token_user_id",
                 schema: "auth",
                 table: "user_refresh_token",
@@ -728,6 +767,10 @@ namespace Skillitory.Api.DataStore.Migrations
             migrationBuilder.DropTable(
                 name: "organization_churn",
                 schema: "org");
+
+            migrationBuilder.DropTable(
+                name: "password_history",
+                schema: "auth");
 
             migrationBuilder.DropTable(
                 name: "role_claim",

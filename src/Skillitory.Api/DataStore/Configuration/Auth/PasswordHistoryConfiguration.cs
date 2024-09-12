@@ -1,0 +1,25 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Skillitory.Api.DataStore.Entities.Auth;
+
+namespace Skillitory.Api.DataStore.Configuration.Auth;
+
+public class PasswordHistoryConfiguration : IEntityTypeConfiguration<PasswordHistory>
+{
+    public void Configure(EntityTypeBuilder<PasswordHistory> builder)
+    {
+        builder.ToTable("password_history", "auth");
+        builder.HasKey(x => x.Id);
+
+        builder.HasIndex(x => x.UserId);
+
+        builder.Property(x => x.PasswordHash)
+            .HasMaxLength(100)
+            .IsRequired();
+
+        builder.HasOne(x => x.User)
+            .WithMany(x => x.PasswordHistories)
+            .HasForeignKey(x => x.UserId)
+            .IsRequired();
+    }
+}

@@ -9,7 +9,7 @@ public class PasswordHistoryConfiguration : IEntityTypeConfiguration<PasswordHis
     public void Configure(EntityTypeBuilder<PasswordHistory> builder)
     {
         builder.ToTable("password_history", "auth");
-        builder.HasKey(x => x.Id);
+        builder.HasKey(x => new { x.UserId, x.PasswordHash });
 
         builder.HasIndex(x => x.UserId);
 

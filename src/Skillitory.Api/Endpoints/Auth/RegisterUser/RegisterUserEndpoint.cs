@@ -2,11 +2,13 @@ using System.Net;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using Skillitory.Api.DataStore;
 using Skillitory.Api.DataStore.Common.Enumerations;
 using Skillitory.Api.DataStore.Entities.Auth;
 using Skillitory.Api.DataStore.Entities.Mbr;
 using Skillitory.Api.DataStore.Entities.Org;
+using Skillitory.Api.Models.Configuration;
 using Skillitory.Api.Services.Interfaces;
 using Visus.Cuid;
 
@@ -18,20 +20,26 @@ public class RegisterUserEndpoint : Endpoint<RegisterUserCommand, Results<NoCont
     private readonly IRegisterUserDataService _registerUserDataService;
     private readonly IEmailService _emailService;
     private readonly IAuditService _auditService;
+    private readonly IDateTimeService _dateTimeService;
     private readonly ILoggerService<RegisterUserEndpoint> _loggerService;
+    private readonly SecurityConfiguration _securityConfiguration;
 
     public RegisterUserEndpoint(
         UserManager<AuthUser> userManager,
         IRegisterUserDataService registerUserDataService,
         IEmailService emailService,
         IAuditService auditService,
-        ILoggerService<RegisterUserEndpoint> loggerService)
+        IDateTimeService dateTimeService,
+        ILoggerService<RegisterUserEndpoint> loggerService,
+        IOptions<SecurityConfiguration> securityConfiguration)
     {
         _userManager = userManager;
         _registerUserDataService = registerUserDataService;
         _emailService = emailService;
         _auditService = auditService;
+        _dateTimeService = dateTimeService;
         _loggerService = loggerService;
+        _securityConfiguration = securityConfiguration.Value;
     }
 
     public override void Configure()
@@ -47,6 +55,8 @@ public class RegisterUserEndpoint : Endpoint<RegisterUserCommand, Results<NoCont
             UserUniqueKey = new Cuid2().ToString(),
             Email = req.Email,
             UserName = req.Email,
+            LastPasswordChangedDateTime = _dateTimeService.UtcNow,
+            PasswordExpirationDateTime = _dateTimeService.UtcNow.AddDays(_securityConfiguration.Password.DefaultPasswordLifetimeDays),
             Member = new Member
             {
                 FirstName = req.FirstName,
@@ -68,6 +78,13 @@ public class RegisterUserEndpoint : Endpoint<RegisterUserCommand, Results<NoCont
         }
 
         var result = await _userManager.CreateAsync(user, req.Password);
+        user.PasswordHistories.Add(new PasswordHistory
+        {
+            PasswordHash = user.PasswordHash!,
+            CreatedDateTime = _dateTimeService.UtcNow,
+        });
+        await _userManager.UpdateAsync(user);
+
         if (!result.Succeeded)
         {
             var errors = string.Join(Environment.NewLine,

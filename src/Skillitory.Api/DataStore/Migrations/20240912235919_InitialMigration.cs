@@ -228,15 +228,13 @@ namespace Skillitory.Api.DataStore.Migrations
                 schema: "auth",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     user_id = table.Column<int>(type: "integer", nullable: false),
                     password_hash = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     created_date_time = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_password_history", x => x.id);
+                    table.PrimaryKey("pk_password_history", x => new { x.user_id, x.password_hash });
                     table.ForeignKey(
                         name: "fk_password_history_users_user_id",
                         column: x => x.user_id,
@@ -557,24 +555,24 @@ namespace Skillitory.Api.DataStore.Migrations
                 columns: new[] { "id", "concurrency_stamp", "description", "is_application_administrator_role", "name", "normalized_name" },
                 values: new object[,]
                 {
-                    { 1, "79c49f07-0c9b-48ee-a4fd-8ab22c6acaad", "Users in this role can read and write all Skillitory resources, including customer data.", true, "Skillitory Administrator", "SKILLITORY ADMINISTRATOR" },
-                    { 2, "b14942c6-961f-4c92-9aed-2a6a575154be", "Users in this role can read all Skillitory resources, including customer data.", true, "Skillitory Viewer", "SKILLITORY VIEWER" },
-                    { 3, "fa81d3db-b0d7-4054-8aa9-ae397e530762", "Users in this role can administrate the organizations that they're associated with.", false, "Organization Administrator", "ORGANIZATION ADMINISTRATOR" },
-                    { 4, "346a70fa-a246-4614-8f92-c18e701e0250", "Users in this role can view the details and users of the organizations that they're associated with.", false, "Organization Viewer", "ORGANIZATION VIEWER" },
-                    { 5, "b694c902-ef56-4d71-8182-1fbd7beac6e6", "Users in this role are standard users that can manage their own profile, skills, goals, etc.", false, "User", "USER" }
+                    { 1, "00d39697-5c1e-453b-88d2-8e85786e4d5e", "Users in this role can read and write all Skillitory resources, including customer data.", true, "Skillitory Administrator", "SKILLITORY ADMINISTRATOR" },
+                    { 2, "41429425-e016-43c5-98ea-6a3376427188", "Users in this role can read all Skillitory resources, including customer data.", true, "Skillitory Viewer", "SKILLITORY VIEWER" },
+                    { 3, "5c2fe507-2087-4824-918b-1dcf08dada53", "Users in this role can administrate the organizations that they're associated with.", false, "Organization Administrator", "ORGANIZATION ADMINISTRATOR" },
+                    { 4, "4f0cf3b6-7c40-4a08-bbb0-452b490081ba", "Users in this role can view the details and users of the organizations that they're associated with.", false, "Organization Viewer", "ORGANIZATION VIEWER" },
+                    { 5, "0ccb7286-d98b-458a-978c-3a01bc0edf93", "Users in this role are standard users that can manage their own profile, skills, goals, etc.", false, "User", "USER" }
                 });
 
             migrationBuilder.InsertData(
                 schema: "auth",
                 table: "user",
                 columns: new[] { "id", "access_failed_count", "concurrency_stamp", "created_by", "created_date_time", "email", "email_confirmed", "is_sign_in_allowed", "is_system_user", "last_password_changed_date_time", "lockout_enabled", "lockout_end", "normalized_email", "normalized_user_name", "otp_type_id", "password_expiration_date_time", "password_hash", "phone_number", "phone_number_confirmed", "security_stamp", "terminated_on", "two_factor_enabled", "updated_by", "updated_date_time", "user_name", "user_unique_key" },
-                values: new object[] { 1, 0, "2456d767-b6c5-4cd9-a1a3-13c8da886a3a", 1, new DateTimeOffset(new DateTime(2024, 9, 12, 2, 46, 46, 255, DateTimeKind.Unspecified).AddTicks(8840), new TimeSpan(0, 0, 0, 0, 0)), "system_user@skillitory.com", false, false, true, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), false, null, "SYSTEM_USER@SKILLITORY.COM", "SYSTEM_USER@SKILLITORY.COM", null, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), null, null, false, "NEVER_GOING_TO_SIGN_IN", null, false, null, null, "system_user@skillitory.com", "ei4gr8aqzb0utfb0fgnr3ssk" });
+                values: new object[] { 1, 0, "0f5c7c80-6cfc-45cf-b2c0-378a9748dc61", 1, new DateTimeOffset(new DateTime(2024, 9, 12, 23, 59, 19, 773, DateTimeKind.Unspecified).AddTicks(6000), new TimeSpan(0, 0, 0, 0, 0)), "system_user@skillitory.com", false, false, true, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), false, null, "SYSTEM_USER@SKILLITORY.COM", "SYSTEM_USER@SKILLITORY.COM", null, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), null, null, false, "NEVER_GOING_TO_SIGN_IN", null, false, null, null, "system_user@skillitory.com", "ayrlakhn20ax7fht5ugtjh3b" });
 
             migrationBuilder.InsertData(
                 schema: "org",
                 table: "organization",
                 columns: new[] { "organization_id", "created_by", "created_date_time", "description", "external_id_name", "is_logo_override_allowed", "is_system_organization", "logo_stored_file_id", "name", "notes", "organization_unique_key", "password_lifetime_days", "previous_tracked_password_count", "trial_period_ends_on", "updated_by", "updated_date_time" },
-                values: new object[] { 1, 1, new DateTimeOffset(new DateTime(2024, 9, 12, 2, 46, 46, 255, DateTimeKind.Unspecified).AddTicks(9020), new TimeSpan(0, 0, 0, 0, 0)), "The organization that owns and developed Skillitory.", null, false, true, null, "StaticSphere", null, "jbtp2mdwu81xu4pj4c4giw07", null, null, null, null, null });
+                values: new object[] { 1, 1, new DateTimeOffset(new DateTime(2024, 9, 12, 23, 59, 19, 773, DateTimeKind.Unspecified).AddTicks(6180), new TimeSpan(0, 0, 0, 0, 0)), "The organization that owns and developed Skillitory.", null, false, true, null, "StaticSphere", null, "mvhhuvhgr8yu0l14wrcthkvm", null, null, null, null, null });
 
             migrationBuilder.CreateIndex(
                 name: "ix_audit_log_audit_log_type_id",

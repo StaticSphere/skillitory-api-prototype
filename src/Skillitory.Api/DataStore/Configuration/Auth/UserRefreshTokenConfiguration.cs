@@ -11,7 +11,10 @@ public class UserRefreshTokenConfiguration : IEntityTypeConfiguration<UserRefres
         builder.ToTable("user_refresh_token", "auth");
         builder.HasKey(x => x.Jti);
 
-        builder.HasIndex(x => new { x.Jti, x.UserId})
+        builder.HasIndex(x => new { x.UserId, x.Jti })
+            .IsUnique();
+
+        builder.HasIndex(x => new { x.UserId, x.Token })
             .IsUnique();
 
         builder.Property(x => x.Jti)

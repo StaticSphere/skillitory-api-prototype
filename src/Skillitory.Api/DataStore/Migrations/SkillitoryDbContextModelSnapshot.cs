@@ -308,7 +308,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "00d39697-5c1e-453b-88d2-8e85786e4d5e",
+                            ConcurrencyStamp = "5978c351-c872-4e36-a64e-b3526cade363",
                             Description = "Users in this role can read and write all Skillitory resources, including customer data.",
                             IsApplicationAdministratorRole = true,
                             Name = "Skillitory Administrator",
@@ -317,7 +317,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "41429425-e016-43c5-98ea-6a3376427188",
+                            ConcurrencyStamp = "cb397c9c-2c33-47a7-9f38-f7acb5879f4b",
                             Description = "Users in this role can read all Skillitory resources, including customer data.",
                             IsApplicationAdministratorRole = true,
                             Name = "Skillitory Viewer",
@@ -326,7 +326,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "5c2fe507-2087-4824-918b-1dcf08dada53",
+                            ConcurrencyStamp = "7d6418e6-c7f6-41d9-aa0e-7e83cba4dfa0",
                             Description = "Users in this role can administrate the organizations that they're associated with.",
                             IsApplicationAdministratorRole = false,
                             Name = "Organization Administrator",
@@ -335,7 +335,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "4f0cf3b6-7c40-4a08-bbb0-452b490081ba",
+                            ConcurrencyStamp = "8898d64c-8a2d-4d2e-acd7-15630b419469",
                             Description = "Users in this role can view the details and users of the organizations that they're associated with.",
                             IsApplicationAdministratorRole = false,
                             Name = "Organization Viewer",
@@ -344,7 +344,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 5,
-                            ConcurrencyStamp = "0ccb7286-d98b-458a-978c-3a01bc0edf93",
+                            ConcurrencyStamp = "456b24f8-a56d-4fa3-a4e6-fa0d63601488",
                             Description = "Users in this role are standard users that can manage their own profile, skills, goals, etc.",
                             IsApplicationAdministratorRole = false,
                             Name = "User",
@@ -492,9 +492,9 @@ namespace Skillitory.Api.DataStore.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "0f5c7c80-6cfc-45cf-b2c0-378a9748dc61",
+                            ConcurrencyStamp = "a4b3e319-75dd-4fca-a187-3ad9b68f4b94",
                             CreatedBy = 1,
-                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 9, 12, 23, 59, 19, 773, DateTimeKind.Unspecified).AddTicks(6000), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 9, 14, 20, 20, 13, 198, DateTimeKind.Unspecified).AddTicks(1740), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "system_user@skillitory.com",
                             EmailConfirmed = false,
                             IsSignInAllowed = false,
@@ -508,7 +508,7 @@ namespace Skillitory.Api.DataStore.Migrations
                             SecurityStamp = "NEVER_GOING_TO_SIGN_IN",
                             TwoFactorEnabled = false,
                             UserName = "system_user@skillitory.com",
-                            UserUniqueKey = "ayrlakhn20ax7fht5ugtjh3b"
+                            UserUniqueKey = "h9sj1uho8609n46dhxq3zv7c"
                         });
                 });
 
@@ -594,12 +594,13 @@ namespace Skillitory.Api.DataStore.Migrations
                     b.HasKey("Jti")
                         .HasName("pk_user_refresh_token");
 
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_user_refresh_token_user_id");
-
-                    b.HasIndex("Jti", "UserId")
+                    b.HasIndex("UserId", "Jti")
                         .IsUnique()
-                        .HasDatabaseName("ix_user_refresh_token_jti_user_id");
+                        .HasDatabaseName("ix_user_refresh_token_user_id_jti");
+
+                    b.HasIndex("UserId", "Token")
+                        .IsUnique()
+                        .HasDatabaseName("ix_user_refresh_token_user_id_token");
 
                     b.ToTable("user_refresh_token", "auth");
                 });
@@ -868,12 +869,12 @@ namespace Skillitory.Api.DataStore.Migrations
                         {
                             OrganizationId = 1,
                             CreatedBy = 1,
-                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 9, 12, 23, 59, 19, 773, DateTimeKind.Unspecified).AddTicks(6180), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 9, 14, 20, 20, 13, 198, DateTimeKind.Unspecified).AddTicks(2000), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "The organization that owns and developed Skillitory.",
                             IsLogoOverrideAllowed = false,
                             IsSystemOrganization = true,
                             Name = "StaticSphere",
-                            OrganizationUniqueKey = "mvhhuvhgr8yu0l14wrcthkvm"
+                            OrganizationUniqueKey = "oapgxnjraoho84o8rryjsbxa"
                         });
                 });
 

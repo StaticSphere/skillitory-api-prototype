@@ -6,4 +6,6 @@ public interface IUserRefreshTokenDataService
 {
     Task SaveUserRefreshTokenAsync(int userId, Guid jti, string refreshToken, DateTimeOffset refreshTokenExpiration,
         CancellationToken cancellationToken = default);
+
+    Task DeleteUserRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken = default);
 }

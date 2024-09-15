@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Skillitory.Api.DataStore.Common.DataServices.Auth.Interfaces;
 using Skillitory.Api.DataStore.Entities.Auth;
+using Visus.Cuid;
 
 namespace Skillitory.Api.DataStore.Common.DataServices.Auth;
 
@@ -15,19 +16,40 @@ public class UserRefreshTokenDataService : IUserRefreshTokenDataService
         _dbContext = dbContext;
     }
 
-    public async Task SaveUserRefreshTokenAsync(int userId, Guid jti, string refreshToken, DateTimeOffset refreshTokenExpiration,
+    public async Task<UserRefreshToken?> GetCurrentUserRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.UserRefreshTokens
+            .AsTracking()
+            .Where(x => x.Token == refreshToken && x.ExpirationDateTime > DateTime.UtcNow)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task SaveNewUserRefreshTokenAsync(int userId, Guid jti, string refreshToken, DateTimeOffset refreshTokenExpiration,
         CancellationToken cancellationToken = default)
     {
         await PurgeUserExpiredRefreshTokensAsync(userId, cancellationToken);
 
         _dbContext.UserRefreshTokens.Add(new UserRefreshToken
         {
+            UniqueKey = new Cuid2().ToString(),
             UserId = userId,
             Jti = jti.ToString(),
             Token = refreshToken,
             ExpirationDateTime = refreshTokenExpiration,
             CreatedDateTime = DateTime.UtcNow,
         });
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task UpdateUserRefreshTokenAsync(UserRefreshToken token, Guid jti, string refreshToken,
+        DateTimeOffset refreshTokenExpiration, CancellationToken cancellationToken = default)
+    {
+        await PurgeUserExpiredRefreshTokensAsync(token.UserId, cancellationToken);
+
+        token.Jti = jti.ToString();
+        token.Token = refreshToken;
+        token.ExpirationDateTime = refreshTokenExpiration;
 
         await _dbContext.SaveChangesAsync(cancellationToken);
     }

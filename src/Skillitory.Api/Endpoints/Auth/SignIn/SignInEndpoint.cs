@@ -45,7 +45,7 @@ public class SignInEndpoint : Endpoint<SignInCommand, Results<UnauthorizedHttpRe
         var jti = Guid.NewGuid();
         var tokens = await _tokenService.GenerateAuthTokensAsync(user, jti, ct);
 
-        await _userRefreshTokenDataService.SaveUserRefreshTokenAsync(user.Id, jti, tokens.RefreshToken, tokens.RefreshTokenExpiration, ct);
+        await _userRefreshTokenDataService.SaveNewUserRefreshTokenAsync(user.Id, jti, tokens.RefreshToken, tokens.RefreshTokenExpiration, ct);
 
         await _auditService.AuditUserActionAsync(user.Id, AuditLogTypeEnum.SignIn, ct);
 

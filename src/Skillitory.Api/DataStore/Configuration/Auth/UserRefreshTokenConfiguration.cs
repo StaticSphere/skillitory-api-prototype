@@ -9,13 +9,17 @@ public class UserRefreshTokenConfiguration : IEntityTypeConfiguration<UserRefres
     public void Configure(EntityTypeBuilder<UserRefreshToken> builder)
     {
         builder.ToTable("user_refresh_token", "auth");
-        builder.HasKey(x => x.Jti);
+        builder.HasKey(x => x.UniqueKey);
 
         builder.HasIndex(x => new { x.UserId, x.Jti })
             .IsUnique();
 
         builder.HasIndex(x => new { x.UserId, x.Token })
             .IsUnique();
+
+        builder.Property(x => x.UniqueKey)
+            .HasMaxLength(50)
+            .IsRequired();
 
         builder.Property(x => x.Jti)
             .HasMaxLength(40)

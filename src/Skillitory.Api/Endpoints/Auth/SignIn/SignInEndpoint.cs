@@ -36,7 +36,7 @@ public class SignInEndpoint : Endpoint<SignInCommand, Results<UnauthorizedHttpRe
     public override async Task<Results<UnauthorizedHttpResult, Ok<SignInCommandResponse>>> ExecuteAsync(SignInCommand req, CancellationToken ct)
     {
         var user = await _userManager.FindByEmailAsync(req.Email);
-        if (user is null || !user.IsSignInAllowed || user.TerminatedOn.HasValue)
+        if (user is null || !user.IsSignInAllowed || user.TerminatedOnDateTime.HasValue)
             return TypedResults.Unauthorized();
 
         if (!(await _userManager.CheckPasswordAsync(user, req.Password)))

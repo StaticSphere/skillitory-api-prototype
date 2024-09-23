@@ -4,7 +4,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://local.api.skillitory.io:48467",
+      "applicationUrl": "http://localhost:48467",
       "sslPort": 44331
     }
   },
@@ -14,7 +14,7 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger/index.html",
-      "applicationUrl": "http://local.api.skillitory.io:5241",
+      "applicationUrl": "http://localhost:5241",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -24,7 +24,7 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger/index.html",
-      "applicationUrl": "https://local.api.skillitory.io:7252",
+      "applicationUrl": "https://localhost:7252",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

@@ -103,16 +103,9 @@ public static partial class ApiServicesBootstrap
                 select new { Contract = c, Implementation = i }).ToList()
             .ForEach(x => services.AddScoped(x.Contract, x.Implementation));
 
+        // SMTP
         var smtpConfiguration = configuration.GetSection("Smtp").Get<SmtpConfiguration>();
-        services
-            .AddFluentEmail(smtpConfiguration!.DefaultSender)
-            .AddLiquidRenderer(options =>
-            {
-                options.FileProvider = new EmbeddedFileProvider(
-                    Assembly.GetExecutingAssembly(),
-                    "Skillitory.Api.Resources.EmailTemplates");
-            });
-
+        services.AddFluentEmail(smtpConfiguration!.DefaultSender);
         services.AddSingleton<ISender>(_ => new MailKitSender(new SmtpClientOptions
         {
             Server = smtpConfiguration.Server,

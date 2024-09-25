@@ -1,17 +1,26 @@
 using System.Web;
 using FluentEmail.Core;
-using Skillitory.Api.Resources;
+using Fluid;
+using Skillitory.Api.DataStore.Common.DataServices.Com.Interfaces;
+using Skillitory.Api.DataStore.Entities.Com.Enumerations;
+using Skillitory.Api.Exceptions;
 using Skillitory.Api.Services.Interfaces;
 
 namespace Skillitory.Api.Services;
 
 public class EmailService : IEmailService
 {
+    private static readonly FluidParser Parser = new ();
+    private readonly ICommunicationTemplateDataService _communicationTemplateDataService;
     private readonly IConfiguration _configuration;
     private readonly IFluentEmail _mailer;
 
-    public EmailService(IFluentEmail mailer, IConfiguration configuration)
+    public EmailService(
+        ICommunicationTemplateDataService communicationTemplateDataService,
+        IFluentEmail mailer,
+        IConfiguration configuration)
     {
+        _communicationTemplateDataService = communicationTemplateDataService;
         _mailer = mailer;
         _configuration = configuration;
     }
@@ -42,15 +51,29 @@ public class EmailService : IEmailService
     internal string UrlRoot =>
         _configuration["WebAppUrl"]!.Trim('/', '\\') + "/";
 
-    private async Task SendEmailInternalAsync(string email, string subject, string template, object? parameters,
+    private async Task SendEmailInternalAsync(string email, string subject, string templateName, object? parameters,
         CancellationToken cancellationToken = default)
     {
+        var template = await _communicationTemplateDataService.GetCommunicationTemplateAsync(templateName,
+            CommunicationTemplateTypeEnum.Email, cancellationToken);
+
+        if (template is null)
+            throw new EmailTemplateNotFoundException(templateName);
+
+        string renderedMessage = "";
+        if (Parser.TryParse(template, out var parsedTemplate, out var error))
+        {
+            var context = new TemplateContext(parameters);
+            renderedMessage = await parsedTemplate.RenderAsync(context);
+        }
+        else
+        {
+            throw new EmailTemplateRenderException(templateName, error);
+        }
+
         await _mailer.To(email)
             .Subject(subject)
-            .UsingTemplateFromEmbedded(
-                $"{EmbeddedResources.EmailTemplatePathRoot}.{template}.liquid",
-                parameters,
-                typeof(EmailService).Assembly)
+            .Body(renderedMessage, true)
             .SendAsync(cancellationToken);
     }
 }

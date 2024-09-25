@@ -1,7 +1,7 @@
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
-using Skillitory.Api.DataStore.Common.Enumerations;
+using Skillitory.Api.DataStore.Entities.Audit.Enumerations;
 using Skillitory.Api.DataStore.Entities.Auth;
 using Skillitory.Api.Services.Interfaces;
 

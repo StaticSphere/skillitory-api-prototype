@@ -1,8 +1,11 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
-using Skillitory.Api.DataStore.Common.Enumerations;
 using Skillitory.Api.DataStore.Entities.Audit;
+using Skillitory.Api.DataStore.Entities.Audit.Enumerations;
 using Skillitory.Api.DataStore.Entities.Auth;
+using Skillitory.Api.DataStore.Entities.Auth.Enumerations;
+using Skillitory.Api.DataStore.Entities.Com;
+using Skillitory.Api.DataStore.Entities.Com.Enumerations;
 using Skillitory.Api.DataStore.Entities.Org;
 using Visus.Cuid;
 
@@ -124,6 +127,194 @@ public static class ModelBuilderExtensions
             }
         );
 
+        builder.Entity<CommunicationTemplate>().HasData(
+            new CommunicationTemplate
+            {
+                Id = 1,
+                CommunicationTemplateTypeId = CommunicationTemplateTypeEnum.Email,
+                Name = "ValidateSkillitoryAccount",
+                CreatedBy = 1,
+                CreatedDateTime = DateTime.UtcNow,
+                Template = @"<!DOCTYPE html>
+<html lang=""en"">
+  <head>
+    <meta charset=""UTF-8"" />
+    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"" />
+    <title>Skillitory Communication</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+      }
+
+      .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100dvh;
+        background-color: gray;
+      }
+
+      .card {
+        max-width: 30rem;
+        padding: 2rem;
+        border: solid 1px darkgray;
+        border-radius: 1rem;
+        background-color: lightgray;
+        box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.5);
+      }
+
+      .card__content > p {
+        margin: 1rem auto;
+      }
+    </style>
+  </head>
+  <body class=""container"">
+    <main class=""card"" role=""main"">
+      <section class=""card__content"">
+        <p>
+          Your user account has been created in Skillitory. Please click the
+          following link to validate your email address:
+        </p>
+        <p>
+          <a href=""{{ callbackUrl }}"">Verify Email</a>
+        </p>
+      </section>
+    </main>
+  </body>
+</html>"
+            },
+            new CommunicationTemplate
+            {
+                Id = 2,
+                CommunicationTemplateTypeId = CommunicationTemplateTypeEnum.Email,
+                Name = "ForgotPassword",
+                CreatedBy = 1,
+                CreatedDateTime = DateTime.UtcNow,
+                Template = @"<!DOCTYPE html>
+<html lang=""en"">
+  <head>
+    <meta charset=""UTF-8"" />
+    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"" />
+    <title>Skillitory Communication</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+      }
+
+      .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100dvh;
+        background-color: gray;
+      }
+
+      .card {
+        max-width: 30rem;
+        padding: 2rem;
+        border: solid 1px darkgray;
+        border-radius: 1rem;
+        background-color: lightgray;
+        box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.5);
+      }
+
+      .card__content > p {
+        margin: 1rem auto;
+      }
+    </style>
+  </head>
+  <body class=""container"">
+    <main class=""card"" role=""main"">
+      <section class=""card__content"">
+        <p>
+          A request has been sent to set or reset your Skillitory password.
+          Please click the link below, which will take you to the Skillitory
+          reset password screen.
+        </p>
+        <p>
+          Please note that your new password must abide by the following rules:
+        </p>
+        <ul>
+          <li>Must be at least 8 characters</li>
+          <li>At least 1 uppercase letter</li>
+          <li>At least 1 lowercase letter</li>
+          <li>At least 1 number</li>
+          <li>At least 1 symbol</li>
+        </ul>
+        <p>
+          <strong
+            ><a href=""{{ callbackUrl }}"" target=""_blank"">
+              Please click here to go to the reset password screen.</a
+            >
+          </strong>
+          <br />
+        </p>
+      </section>
+    </main>
+  </body>
+</html>"
+            },
+            new CommunicationTemplate
+            {
+                Id = 3,
+                CommunicationTemplateTypeId = CommunicationTemplateTypeEnum.Email,
+                Name = "SignInOtp",
+                CreatedBy = 1,
+                CreatedDateTime = DateTime.UtcNow,
+                Template = @"<!DOCTYPE html>
+<html lang=""en"">
+  <head>
+    <meta charset=""UTF-8"" />
+    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"" />
+    <title>Skillitory Communication</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+      }
+
+      .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100dvh;
+        background-color: gray;
+      }
+
+      .card {
+        max-width: 30rem;
+        padding: 2rem;
+        border: solid 1px darkgray;
+        border-radius: 1rem;
+        background-color: lightgray;
+        box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.5);
+      }
+
+      .card__content > p {
+        margin: 1rem auto;
+      }
+    </style>
+  </head>
+  <body class=""container"">
+    <main class=""card"" role=""main"">
+      <section class=""card__content"">
+        <p>
+          Please enter the following one time password in Skillitory to complete
+          your sign in!
+        </p>
+        <h1>{{ otp }}</h1>
+      </section>
+    </main>
+  </body>
+</html>"
+            }
+        );
+
         builder.Entity<OtpType>().HasData(
             Enum.GetValues<OtpTypeEnum>()
                 .Select(x => new OtpType { Id = x, Name = x.ToString() })
@@ -132,6 +323,11 @@ public static class ModelBuilderExtensions
         builder.Entity<AuditLogType>().HasData(
             Enum.GetValues<AuditLogTypeEnum>()
                 .Select(x => new AuditLogType { Id = x, Name = x.ToString() })
+                .ToArray());
+
+        builder.Entity<CommunicationTemplateType>().HasData(
+            Enum.GetValues<CommunicationTemplateTypeEnum>()
+                .Select(x => new CommunicationTemplateType{ Id = x, Name = x.ToString() })
                 .ToArray());
         //
         // builder.Entity<StoredFileType>().HasData(

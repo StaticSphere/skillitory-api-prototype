@@ -12,7 +12,7 @@ using Skillitory.Api.DataStore;
 namespace Skillitory.Api.DataStore.Migrations
 {
     [DbContext(typeof(SkillitoryDbContext))]
-    [Migration("20240920013701_InitialMigration")]
+    [Migration("20240925021811_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -311,7 +311,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "96fa2709-cda5-43a8-8123-5251b0cee3da",
+                            ConcurrencyStamp = "4bb76f38-ab88-4de6-8f53-7155d3f0b96c",
                             Description = "Users in this role can read and write all Skillitory resources, including customer data.",
                             IsApplicationAdministratorRole = true,
                             Name = "Skillitory Administrator",
@@ -320,7 +320,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "455d1521-f134-446d-9dfe-eb4b2e9e649e",
+                            ConcurrencyStamp = "0004d289-0f07-47da-982c-5b240610ef53",
                             Description = "Users in this role can read all Skillitory resources, including customer data.",
                             IsApplicationAdministratorRole = true,
                             Name = "Skillitory Viewer",
@@ -329,7 +329,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "238ad24e-9e3e-439f-b4df-a592831d9319",
+                            ConcurrencyStamp = "0b6327cf-118d-45d0-897b-ca875c78841c",
                             Description = "Users in this role can administrate the organizations that they're associated with.",
                             IsApplicationAdministratorRole = false,
                             Name = "Organization Administrator",
@@ -338,7 +338,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "6f95f4b3-79b5-4c42-a908-4023fb89851a",
+                            ConcurrencyStamp = "783b8bb6-c42d-41e9-9f21-e1b52dbaf65c",
                             Description = "Users in this role can view the details and users of the organizations that they're associated with.",
                             IsApplicationAdministratorRole = false,
                             Name = "Organization Viewer",
@@ -347,7 +347,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 5,
-                            ConcurrencyStamp = "587819ab-af86-48bf-9fb4-254c09b3007b",
+                            ConcurrencyStamp = "29a7f463-111d-4651-991b-2f18d3a67b55",
                             Description = "Users in this role are standard users that can manage their own profile, skills, goals, etc.",
                             IsApplicationAdministratorRole = false,
                             Name = "User",
@@ -499,9 +499,9 @@ namespace Skillitory.Api.DataStore.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ee97bf44-7ecb-4ed5-87db-49ecf09afa5b",
+                            ConcurrencyStamp = "30f9bd1a-878d-467e-a36a-44c59a79fa68",
                             CreatedBy = 1,
-                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 9, 20, 1, 37, 1, 576, DateTimeKind.Unspecified).AddTicks(1010), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 9, 25, 2, 18, 11, 18, DateTimeKind.Unspecified).AddTicks(460), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "system_user@skillitory.com",
                             EmailConfirmed = false,
                             IsSignInAllowed = false,
@@ -515,7 +515,7 @@ namespace Skillitory.Api.DataStore.Migrations
                             SecurityStamp = "NEVER_GOING_TO_SIGN_IN",
                             TwoFactorEnabled = false,
                             UserName = "system_user@skillitory.com",
-                            UserUniqueKey = "fx5ro61za4tdg6y4j9g40f2e"
+                            UserUniqueKey = "u2yq224ly3y7co6n8w588eif"
                         });
                 });
 
@@ -616,6 +616,109 @@ namespace Skillitory.Api.DataStore.Migrations
                         .HasDatabaseName("ix_user_refresh_token_user_id_token");
 
                     b.ToTable("user_refresh_token", "auth");
+                });
+
+            modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Com.CommunicationTemplate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CommunicationTemplateTypeId")
+                        .HasColumnType("integer")
+                        .HasColumnName("communication_template_type_id");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTimeOffset>("CreatedDateTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_date_time");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Template")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("template");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("integer")
+                        .HasColumnName("updated_by");
+
+                    b.Property<DateTimeOffset?>("UpdatedDateTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_date_time");
+
+                    b.HasKey("Id")
+                        .HasName("pk_communication_template");
+
+                    b.HasIndex("CommunicationTemplateTypeId")
+                        .HasDatabaseName("ix_communication_template_communication_template_type_id");
+
+                    b.ToTable("communication_template", "com");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CommunicationTemplateTypeId = 1,
+                            CreatedBy = 1,
+                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 9, 25, 2, 18, 11, 18, DateTimeKind.Unspecified).AddTicks(710), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "ValidateSkillitoryAccount",
+                            Template = "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>Skillitory Communication</title>\n    <style>\n      * {\n        margin: 0;\n        padding: 0;\n        font-family: Verdana, Geneva, Tahoma, sans-serif;\n      }\n\n      .container {\n        display: flex;\n        justify-content: center;\n        align-items: center;\n        height: 100dvh;\n        background-color: gray;\n      }\n\n      .card {\n        max-width: 30rem;\n        padding: 2rem;\n        border: solid 1px darkgray;\n        border-radius: 1rem;\n        background-color: lightgray;\n        box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.5);\n      }\n\n      .card__content > p {\n        margin: 1rem auto;\n      }\n    </style>\n  </head>\n  <body class=\"container\">\n    <main class=\"card\" role=\"main\">\n      <section class=\"card__content\">\n        <p>\n          Your user account has been created in Skillitory. Please click the\n          following link to validate your email address:\n        </p>\n        <p>\n          <a href=\"{{ callbackUrl }}\">Verify Email</a>\n        </p>\n      </section>\n    </main>\n  </body>\n</html>"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CommunicationTemplateTypeId = 1,
+                            CreatedBy = 1,
+                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 9, 25, 2, 18, 11, 18, DateTimeKind.Unspecified).AddTicks(710), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "ForgotPassword",
+                            Template = "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>Skillitory Communication</title>\n    <style>\n      * {\n        margin: 0;\n        padding: 0;\n        font-family: Verdana, Geneva, Tahoma, sans-serif;\n      }\n\n      .container {\n        display: flex;\n        justify-content: center;\n        align-items: center;\n        height: 100dvh;\n        background-color: gray;\n      }\n\n      .card {\n        max-width: 30rem;\n        padding: 2rem;\n        border: solid 1px darkgray;\n        border-radius: 1rem;\n        background-color: lightgray;\n        box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.5);\n      }\n\n      .card__content > p {\n        margin: 1rem auto;\n      }\n    </style>\n  </head>\n  <body class=\"container\">\n    <main class=\"card\" role=\"main\">\n      <section class=\"card__content\">\n        <p>\n          A request has been sent to set or reset your Skillitory password.\n          Please click the link below, which will take you to the Skillitory\n          reset password screen.\n        </p>\n        <p>\n          Please note that your new password must abide by the following rules:\n        </p>\n        <ul>\n          <li>Must be at least 8 characters</li>\n          <li>At least 1 uppercase letter</li>\n          <li>At least 1 lowercase letter</li>\n          <li>At least 1 number</li>\n          <li>At least 1 symbol</li>\n        </ul>\n        <p>\n          <strong\n            ><a href=\"{{ callbackUrl }}\" target=\"_blank\">\n              Please click here to go to the reset password screen.</a\n            >\n          </strong>\n          <br />\n        </p>\n      </section>\n    </main>\n  </body>\n</html>"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CommunicationTemplateTypeId = 1,
+                            CreatedBy = 1,
+                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 9, 25, 2, 18, 11, 18, DateTimeKind.Unspecified).AddTicks(710), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "SignInOtp",
+                            Template = "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>Skillitory Communication</title>\n    <style>\n      * {\n        margin: 0;\n        padding: 0;\n        font-family: Verdana, Geneva, Tahoma, sans-serif;\n      }\n\n      .container {\n        display: flex;\n        justify-content: center;\n        align-items: center;\n        height: 100dvh;\n        background-color: gray;\n      }\n\n      .card {\n        max-width: 30rem;\n        padding: 2rem;\n        border: solid 1px darkgray;\n        border-radius: 1rem;\n        background-color: lightgray;\n        box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.5);\n      }\n\n      .card__content > p {\n        margin: 1rem auto;\n      }\n    </style>\n  </head>\n  <body class=\"container\">\n    <main class=\"card\" role=\"main\">\n      <section class=\"card__content\">\n        <p>\n          Please enter the following one time password in Skillitory to complete\n          your sign in!\n        </p>\n        <h1>{{ otp }}</h1>\n      </section>\n    </main>\n  </body>\n</html>"
+                        });
+                });
+
+            modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Com.CommunicationTemplateType", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id")
+                        .HasName("pk_communication_template_type");
+
+                    b.ToTable("communication_template_type", "com");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Email"
+                        });
                 });
 
             modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Mbr.Member", b =>
@@ -882,12 +985,12 @@ namespace Skillitory.Api.DataStore.Migrations
                         {
                             OrganizationId = 1,
                             CreatedBy = 1,
-                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 9, 20, 1, 37, 1, 576, DateTimeKind.Unspecified).AddTicks(1190), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 9, 25, 2, 18, 11, 18, DateTimeKind.Unspecified).AddTicks(670), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "The organization that owns and developed Skillitory.",
                             IsLogoOverrideAllowed = false,
                             IsSystemOrganization = true,
                             Name = "StaticSphere",
-                            OrganizationUniqueKey = "yolzw4k17p2jcf5w1isu0ody"
+                            OrganizationUniqueKey = "bhh0wgbmlt6haxg3lr6pah57"
                         });
                 });
 
@@ -1120,6 +1223,18 @@ namespace Skillitory.Api.DataStore.Migrations
                         .HasConstraintName("fk_user_refresh_token_user_user_id");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Com.CommunicationTemplate", b =>
+                {
+                    b.HasOne("Skillitory.Api.DataStore.Entities.Com.CommunicationTemplateType", "CommunicationTemplateType")
+                        .WithMany()
+                        .HasForeignKey("CommunicationTemplateTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_communication_template_communication_template_types_communi");
+
+                    b.Navigation("CommunicationTemplateType");
                 });
 
             modelBuilder.Entity("Skillitory.Api.DataStore.Entities.Mbr.Member", b =>

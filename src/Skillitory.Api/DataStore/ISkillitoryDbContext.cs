@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Skillitory.Api.DataStore.Entities.Audit;
 using Skillitory.Api.DataStore.Entities.Auth;
+using Skillitory.Api.DataStore.Entities.Com;
 using Skillitory.Api.DataStore.Entities.Mbr;
 using Skillitory.Api.DataStore.Entities.Org;
 
@@ -17,6 +18,8 @@ public interface ISkillitoryDbContext
     DbSet<AuditLogType> AuditLogTypes { get; set; }
     DbSet<AuditLog> AuditLogs { get; set; }
     DbSet<AuditLogMetaData> AuditLogMetaDatas { get; set; }
+    DbSet<CommunicationTemplate> CommunicationTemplates { get; set; }
+    DbSet<CommunicationTemplateType> CommunicationTemplateTypes { get; set; }
     DbSet<Organization> Organizations { get; set; }
     DbSet<OrganizationChurn> OrganizationChurns { get; set; }
     DbSet<OrganizationChurnCategory> OrganizationChurnCategories { get; set; }

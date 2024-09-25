@@ -1,4 +1,4 @@
-using Skillitory.Api.DataStore.Common.Enumerations;
+using Skillitory.Api.DataStore.Entities.Auth.Enumerations;
 
 namespace Skillitory.Api.DataStore.Entities.Auth;
 

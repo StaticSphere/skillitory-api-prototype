@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Skillitory.Api.DataStore;
-using Skillitory.Api.DataStore.Common.Enumerations;
+using Skillitory.Api.DataStore.Entities.Audit.Enumerations;
 using Skillitory.Api.DataStore.Entities.Auth;
 using Skillitory.Api.DataStore.Entities.Mbr;
 using Skillitory.Api.DataStore.Entities.Org;

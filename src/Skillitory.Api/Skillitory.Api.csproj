@@ -13,8 +13,8 @@
         <PackageReference Include="cuid.net" Version="6.0.0" />
         <PackageReference Include="EntityFrameworkCore.NamingConventions" Version="8.0.0" />
         <PackageReference Include="FastEndpoints" Version="5.28.0" />
-        <PackageReference Include="FluentEmail.Liquid" Version="3.0.2" />
-        <PackageReference Include="FluentEmail.MailKit" Version="3.0.2" />
+        <PackageReference Include="Fluid.Core" Version="2.11.1" />
+        <PackageReference Include="jcamp.FluentEmail.MailKit" Version="3.8.0" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.8" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.2"/>
@@ -36,13 +36,9 @@
 
     <ItemGroup>
       <None Remove="Resources\EmailTemplates\_layout.liquid" />
-      <EmbeddedResource Include="Resources\EmailTemplates\_layout.liquid" />
       <None Remove="Resources\EmailTemplates\ValidateSkillitoryAccount.liquid" />
-      <EmbeddedResource Include="Resources\EmailTemplates\ValidateSkillitoryAccount.liquid" />
       <None Remove="Resources\EmailTemplates\SignInOTP.liquid" />
-      <EmbeddedResource Include="Resources\EmailTemplates\SignInOtp.liquid" />
       <None Remove="Resources\EmailTemplates\ForgotPassword.liquid" />
-      <EmbeddedResource Include="Resources\EmailTemplates\ForgotPassword.liquid" />
     </ItemGroup>
 
 </Project>

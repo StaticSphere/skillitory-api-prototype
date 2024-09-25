@@ -1,4 +1,4 @@
-namespace Skillitory.Api.DataStore.Common.Enumerations;
+namespace Skillitory.Api.DataStore.Entities.Audit.Enumerations;
 
 public enum AuditLogTypeEnum
 {

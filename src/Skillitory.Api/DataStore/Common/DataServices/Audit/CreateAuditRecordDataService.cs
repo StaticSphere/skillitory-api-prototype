@@ -2,8 +2,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Skillitory.Api.DataStore.Common.DataServices.Audit.Interfaces;
-using Skillitory.Api.DataStore.Common.Enumerations;
 using Skillitory.Api.DataStore.Entities.Audit;
+using Skillitory.Api.DataStore.Entities.Audit.Enumerations;
 using Skillitory.Api.Services.Interfaces;
 
 namespace Skillitory.Api.DataStore.Common.DataServices.Audit;

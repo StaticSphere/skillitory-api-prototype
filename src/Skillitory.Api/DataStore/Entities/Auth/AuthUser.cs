@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Skillitory.Api.DataStore.Common;
-using Skillitory.Api.DataStore.Common.Enumerations;
+using Skillitory.Api.DataStore.Entities.Auth.Enumerations;
 using Skillitory.Api.DataStore.Entities.Mbr;
 
 namespace Skillitory.Api.DataStore.Entities.Auth;

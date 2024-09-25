@@ -1,4 +1,4 @@
-using Skillitory.Api.DataStore.Common.Enumerations;
+using Skillitory.Api.DataStore.Entities.Audit.Enumerations;
 
 namespace Skillitory.Api.Services.Interfaces;
 

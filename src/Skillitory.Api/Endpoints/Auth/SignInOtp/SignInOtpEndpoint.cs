@@ -7,55 +7,46 @@ using Skillitory.Api.DataStore.Entities.Auth;
 using Skillitory.Api.DataStore.Entities.Auth.Enumerations;
 using Skillitory.Api.Services.Interfaces;
 
-namespace Skillitory.Api.Endpoints.Auth.SignIn;
+namespace Skillitory.Api.Endpoints.Auth.SignInOtp;
 
-public class SignInEndpoint : Endpoint<SignInCommand, Results<UnauthorizedHttpResult, Ok<SignInCommandResponse>>>
+public class SignInOtpEndpoint : Endpoint<SignInOtpCommand, Results<UnauthorizedHttpResult, Ok<SignInOtpCommandResponse>>>
 {
     private readonly UserManager<AuthUser> _userManager;
     private readonly IUserRefreshTokenDataService _userRefreshTokenDataService;
     private readonly ITokenService _tokenService;
-    private readonly IEmailService _emailService;
     private readonly IAuditService _auditService;
 
-    public SignInEndpoint(
+    public SignInOtpEndpoint(
         UserManager<AuthUser> userManager,
         IUserRefreshTokenDataService userRefreshTokenDataService,
         ITokenService tokenService,
-        IEmailService emailService,
         IAuditService auditService)
     {
         _userManager = userManager;
         _userRefreshTokenDataService = userRefreshTokenDataService;
         _tokenService = tokenService;
-        _emailService = emailService;
         _auditService = auditService;
     }
 
     public override void Configure()
     {
-        Post("/auth/sign-in");
+        Post("/auth/sign-in-otp");
         AllowAnonymous();
     }
 
-    public override async Task<Results<UnauthorizedHttpResult, Ok<SignInCommandResponse>>> ExecuteAsync(SignInCommand req, CancellationToken ct)
+    public override async Task<Results<UnauthorizedHttpResult, Ok<SignInOtpCommandResponse>>> ExecuteAsync(SignInOtpCommand req, CancellationToken ct)
     {
         var user = await _userManager.FindByEmailAsync(req.Email);
         if (user is null || !user.IsSignInAllowed || user.TerminatedOnDateTime.HasValue)
             return TypedResults.Unauthorized();
 
-        if (!(await _userManager.CheckPasswordAsync(user, req.Password)))
+        var otpVerified = await _userManager.VerifyTwoFactorTokenAsync(user,
+            req.OtpType == OtpTypeEnum.Email
+                ? TokenOptions.DefaultEmailProvider
+                : TokenOptions.DefaultAuthenticatorProvider, req.Otp);
+
+        if (!otpVerified)
             return TypedResults.Unauthorized();
-
-        if (user.TwoFactorEnabled)
-        {
-            if (user.OtpTypeId == OtpTypeEnum.Email)
-            {
-                var otp = await _userManager.GenerateTwoFactorTokenAsync(user, TokenOptions.DefaultEmailProvider);
-                await _emailService.SendSignInOtpEmailAsync(user.Email!, otp, ct);
-            }
-
-            return TypedResults.Ok(new SignInCommandResponse{ OtpType = OtpTypeEnum.Email});
-        }
 
         var jti = Guid.NewGuid();
         var tokens = await _tokenService.GenerateAuthTokensAsync(user, jti, ct);
@@ -64,6 +55,6 @@ public class SignInEndpoint : Endpoint<SignInCommand, Results<UnauthorizedHttpRe
 
         await _auditService.AuditUserActionAsync(user.Id, AuditLogTypeEnum.SignIn, ct);
 
-        return TypedResults.Ok((SignInCommandResponse)tokens);
+        return TypedResults.Ok((SignInOtpCommandResponse)tokens);
     }
 }

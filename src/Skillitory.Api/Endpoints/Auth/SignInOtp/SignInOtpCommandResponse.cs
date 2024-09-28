@@ -1,17 +1,15 @@
-using Skillitory.Api.DataStore.Entities.Auth.Enumerations;
 using Skillitory.Api.Models;
 
-namespace Skillitory.Api.Endpoints.Auth.SignIn;
+namespace Skillitory.Api.Endpoints.Auth.SignInOtp;
 
-public record SignInCommandResponse
+public record SignInOtpCommandResponse
 {
-    public OtpTypeEnum? OtpType { get; init; }
     public string? AccessToken { get; init; } = "";
     public string? RefreshToken { get; init; } = "";
     public DateTimeOffset? AccessTokenExpiration { get; init; }
     public DateTimeOffset? RefreshTokenExpiration { get; init; }
 
-    public static explicit operator SignInCommandResponse(TokenData src) => new()
+    public static explicit operator SignInOtpCommandResponse(TokenData src) => new()
     {
         AccessToken = src.AccessToken,
         RefreshToken = src.RefreshToken,

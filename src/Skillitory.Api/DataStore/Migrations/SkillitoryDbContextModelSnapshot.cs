@@ -308,7 +308,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "4bb76f38-ab88-4de6-8f53-7155d3f0b96c",
+                            ConcurrencyStamp = "660f7645-1641-4d30-afe2-55f8269b82a0",
                             Description = "Users in this role can read and write all Skillitory resources, including customer data.",
                             IsApplicationAdministratorRole = true,
                             Name = "Skillitory Administrator",
@@ -317,7 +317,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "0004d289-0f07-47da-982c-5b240610ef53",
+                            ConcurrencyStamp = "a86b00b9-35c3-44cf-8fab-18f5a25db6b8",
                             Description = "Users in this role can read all Skillitory resources, including customer data.",
                             IsApplicationAdministratorRole = true,
                             Name = "Skillitory Viewer",
@@ -326,7 +326,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "0b6327cf-118d-45d0-897b-ca875c78841c",
+                            ConcurrencyStamp = "999ecc41-e326-4b10-bb1e-143995359ffb",
                             Description = "Users in this role can administrate the organizations that they're associated with.",
                             IsApplicationAdministratorRole = false,
                             Name = "Organization Administrator",
@@ -335,7 +335,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "783b8bb6-c42d-41e9-9f21-e1b52dbaf65c",
+                            ConcurrencyStamp = "1f4b121c-5200-4dc1-a302-38ef3aeefcbd",
                             Description = "Users in this role can view the details and users of the organizations that they're associated with.",
                             IsApplicationAdministratorRole = false,
                             Name = "Organization Viewer",
@@ -344,7 +344,7 @@ namespace Skillitory.Api.DataStore.Migrations
                         new
                         {
                             Id = 5,
-                            ConcurrencyStamp = "29a7f463-111d-4651-991b-2f18d3a67b55",
+                            ConcurrencyStamp = "1ce3e6ea-779d-4e5e-bb8c-b5500bd3eab7",
                             Description = "Users in this role are standard users that can manage their own profile, skills, goals, etc.",
                             IsApplicationAdministratorRole = false,
                             Name = "User",
@@ -496,9 +496,9 @@ namespace Skillitory.Api.DataStore.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "30f9bd1a-878d-467e-a36a-44c59a79fa68",
+                            ConcurrencyStamp = "959aacd0-b43f-48d6-82b7-1f52d8b03a2b",
                             CreatedBy = 1,
-                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 9, 25, 2, 18, 11, 18, DateTimeKind.Unspecified).AddTicks(460), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 9, 27, 22, 40, 7, 505, DateTimeKind.Unspecified).AddTicks(6980), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "system_user@skillitory.com",
                             EmailConfirmed = false,
                             IsSignInAllowed = false,
@@ -512,7 +512,7 @@ namespace Skillitory.Api.DataStore.Migrations
                             SecurityStamp = "NEVER_GOING_TO_SIGN_IN",
                             TwoFactorEnabled = false,
                             UserName = "system_user@skillitory.com",
-                            UserUniqueKey = "u2yq224ly3y7co6n8w588eif"
+                            UserUniqueKey = "hhhrovf9938vnu35ge0azd7u"
                         });
                 });
 
@@ -669,7 +669,7 @@ namespace Skillitory.Api.DataStore.Migrations
                             Id = 1,
                             CommunicationTemplateTypeId = 1,
                             CreatedBy = 1,
-                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 9, 25, 2, 18, 11, 18, DateTimeKind.Unspecified).AddTicks(710), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 9, 27, 22, 40, 7, 505, DateTimeKind.Unspecified).AddTicks(7200), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "ValidateSkillitoryAccount",
                             Template = "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>Skillitory Communication</title>\n    <style>\n      * {\n        margin: 0;\n        padding: 0;\n        font-family: Verdana, Geneva, Tahoma, sans-serif;\n      }\n\n      .container {\n        display: flex;\n        justify-content: center;\n        align-items: center;\n        height: 100dvh;\n        background-color: gray;\n      }\n\n      .card {\n        max-width: 30rem;\n        padding: 2rem;\n        border: solid 1px darkgray;\n        border-radius: 1rem;\n        background-color: lightgray;\n        box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.5);\n      }\n\n      .card__content > p {\n        margin: 1rem auto;\n      }\n    </style>\n  </head>\n  <body class=\"container\">\n    <main class=\"card\" role=\"main\">\n      <section class=\"card__content\">\n        <p>\n          Your user account has been created in Skillitory. Please click the\n          following link to validate your email address:\n        </p>\n        <p>\n          <a href=\"{{ callbackUrl }}\">Verify Email</a>\n        </p>\n      </section>\n    </main>\n  </body>\n</html>"
                         },
@@ -678,7 +678,7 @@ namespace Skillitory.Api.DataStore.Migrations
                             Id = 2,
                             CommunicationTemplateTypeId = 1,
                             CreatedBy = 1,
-                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 9, 25, 2, 18, 11, 18, DateTimeKind.Unspecified).AddTicks(710), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 9, 27, 22, 40, 7, 505, DateTimeKind.Unspecified).AddTicks(7200), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "ForgotPassword",
                             Template = "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>Skillitory Communication</title>\n    <style>\n      * {\n        margin: 0;\n        padding: 0;\n        font-family: Verdana, Geneva, Tahoma, sans-serif;\n      }\n\n      .container {\n        display: flex;\n        justify-content: center;\n        align-items: center;\n        height: 100dvh;\n        background-color: gray;\n      }\n\n      .card {\n        max-width: 30rem;\n        padding: 2rem;\n        border: solid 1px darkgray;\n        border-radius: 1rem;\n        background-color: lightgray;\n        box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.5);\n      }\n\n      .card__content > p {\n        margin: 1rem auto;\n      }\n    </style>\n  </head>\n  <body class=\"container\">\n    <main class=\"card\" role=\"main\">\n      <section class=\"card__content\">\n        <p>\n          A request has been sent to set or reset your Skillitory password.\n          Please click the link below, which will take you to the Skillitory\n          reset password screen.\n        </p>\n        <p>\n          Please note that your new password must abide by the following rules:\n        </p>\n        <ul>\n          <li>Must be at least 8 characters</li>\n          <li>At least 1 uppercase letter</li>\n          <li>At least 1 lowercase letter</li>\n          <li>At least 1 number</li>\n          <li>At least 1 symbol</li>\n        </ul>\n        <p>\n          <strong\n            ><a href=\"{{ callbackUrl }}\" target=\"_blank\">\n              Please click here to go to the reset password screen.</a\n            >\n          </strong>\n          <br />\n        </p>\n      </section>\n    </main>\n  </body>\n</html>"
                         },
@@ -687,7 +687,7 @@ namespace Skillitory.Api.DataStore.Migrations
                             Id = 3,
                             CommunicationTemplateTypeId = 1,
                             CreatedBy = 1,
-                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 9, 25, 2, 18, 11, 18, DateTimeKind.Unspecified).AddTicks(710), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 9, 27, 22, 40, 7, 505, DateTimeKind.Unspecified).AddTicks(7210), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "SignInOtp",
                             Template = "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>Skillitory Communication</title>\n    <style>\n      * {\n        margin: 0;\n        padding: 0;\n        font-family: Verdana, Geneva, Tahoma, sans-serif;\n      }\n\n      .container {\n        display: flex;\n        justify-content: center;\n        align-items: center;\n        height: 100dvh;\n        background-color: gray;\n      }\n\n      .card {\n        max-width: 30rem;\n        padding: 2rem;\n        border: solid 1px darkgray;\n        border-radius: 1rem;\n        background-color: lightgray;\n        box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.5);\n      }\n\n      .card__content > p {\n        margin: 1rem auto;\n      }\n    </style>\n  </head>\n  <body class=\"container\">\n    <main class=\"card\" role=\"main\">\n      <section class=\"card__content\">\n        <p>\n          Please enter the following one time password in Skillitory to complete\n          your sign in!\n        </p>\n        <h1>{{ otp }}</h1>\n      </section>\n    </main>\n  </body>\n</html>"
                         });
@@ -982,12 +982,12 @@ namespace Skillitory.Api.DataStore.Migrations
                         {
                             OrganizationId = 1,
                             CreatedBy = 1,
-                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 9, 25, 2, 18, 11, 18, DateTimeKind.Unspecified).AddTicks(670), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedDateTime = new DateTimeOffset(new DateTime(2024, 9, 27, 22, 40, 7, 505, DateTimeKind.Unspecified).AddTicks(7160), new TimeSpan(0, 0, 0, 0, 0)),
                             Description = "The organization that owns and developed Skillitory.",
                             IsLogoOverrideAllowed = false,
                             IsSystemOrganization = true,
                             Name = "StaticSphere",
-                            OrganizationUniqueKey = "bhh0wgbmlt6haxg3lr6pah57"
+                            OrganizationUniqueKey = "ql6a0bxhhwh1o3dyzt7cer17"
                         });
                 });
 

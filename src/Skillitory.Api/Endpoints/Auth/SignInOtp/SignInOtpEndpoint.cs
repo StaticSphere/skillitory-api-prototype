@@ -12,17 +12,20 @@ namespace Skillitory.Api.Endpoints.Auth.SignInOtp;
 public class SignInOtpEndpoint : Endpoint<SignInOtpCommand, Results<UnauthorizedHttpResult, Ok<SignInOtpCommandResponse>>>
 {
     private readonly UserManager<AuthUser> _userManager;
+    private readonly ISignInOtpDataService _signInOtpDataService;
     private readonly IUserRefreshTokenDataService _userRefreshTokenDataService;
     private readonly ITokenService _tokenService;
     private readonly IAuditService _auditService;
 
     public SignInOtpEndpoint(
         UserManager<AuthUser> userManager,
+        ISignInOtpDataService signInOtpDataService,
         IUserRefreshTokenDataService userRefreshTokenDataService,
         ITokenService tokenService,
         IAuditService auditService)
     {
         _userManager = userManager;
+        _signInOtpDataService = signInOtpDataService;
         _userRefreshTokenDataService = userRefreshTokenDataService;
         _tokenService = tokenService;
         _auditService = auditService;
@@ -36,7 +39,7 @@ public class SignInOtpEndpoint : Endpoint<SignInOtpCommand, Results<Unauthorized
 
     public override async Task<Results<UnauthorizedHttpResult, Ok<SignInOtpCommandResponse>>> ExecuteAsync(SignInOtpCommand req, CancellationToken ct)
     {
-        var user = await _userManager.FindByEmailAsync(req.Email);
+        var user = await _signInOtpDataService.GetUserByUserUniqueKeyAsync(req.UserUniqueKey, ct);
         if (user is null || !user.IsSignInAllowed || user.TerminatedOnDateTime.HasValue)
             return TypedResults.Unauthorized();
 

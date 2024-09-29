@@ -9,7 +9,7 @@ using Skillitory.Api.Services.Interfaces;
 
 namespace Skillitory.Api.Endpoints.Auth.SignIn;
 
-public class SignInEndpoint : Endpoint<SignInCommand, Results<UnauthorizedHttpResult, Ok<SignInCommandResponse>>>
+public class SignInEndpoint : Endpoint<SignInCommand, Results<UnauthorizedHttpResult, Ok<SignInCommandTokenResponse>, Ok<SignInCommandOtpResponse>>>
 {
     private readonly UserManager<AuthUser> _userManager;
     private readonly IUserRefreshTokenDataService _userRefreshTokenDataService;
@@ -37,7 +37,7 @@ public class SignInEndpoint : Endpoint<SignInCommand, Results<UnauthorizedHttpRe
         AllowAnonymous();
     }
 
-    public override async Task<Results<UnauthorizedHttpResult, Ok<SignInCommandResponse>>> ExecuteAsync(SignInCommand req, CancellationToken ct)
+    public override async Task<Results<UnauthorizedHttpResult, Ok<SignInCommandTokenResponse>, Ok<SignInCommandOtpResponse>>> ExecuteAsync(SignInCommand req, CancellationToken ct)
     {
         var user = await _userManager.FindByEmailAsync(req.Email);
         if (user is null || !user.IsSignInAllowed || user.TerminatedOnDateTime.HasValue)
@@ -54,7 +54,7 @@ public class SignInEndpoint : Endpoint<SignInCommand, Results<UnauthorizedHttpRe
                 await _emailService.SendSignInOtpEmailAsync(user.Email!, otp, ct);
             }
 
-            return TypedResults.Ok(new SignInCommandResponse{ OtpType = OtpTypeEnum.Email});
+            return TypedResults.Ok(new SignInCommandOtpResponse{ OtpType = OtpTypeEnum.Email, UserUniqueKey = user.UserUniqueKey });
         }
 
         var jti = Guid.NewGuid();
@@ -64,6 +64,13 @@ public class SignInEndpoint : Endpoint<SignInCommand, Results<UnauthorizedHttpRe
 
         await _auditService.AuditUserActionAsync(user.Id, AuditLogTypeEnum.SignIn, ct);
 
-        return TypedResults.Ok((SignInCommandResponse)tokens);
+        return TypedResults.Ok(new SignInCommandTokenResponse
+        {
+            UserUniqueKey = user.UserUniqueKey,
+            AccessToken = tokens.AccessToken,
+            RefreshToken = tokens.RefreshToken,
+            AccessTokenExpiration = tokens.AccessTokenExpiration,
+            RefreshTokenExpiration = tokens.RefreshTokenExpiration,
+        });
     }
 }

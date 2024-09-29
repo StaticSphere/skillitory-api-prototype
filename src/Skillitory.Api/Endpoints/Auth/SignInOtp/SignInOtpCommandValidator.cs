@@ -13,9 +13,8 @@ public partial class SignInOtpCommandValidator : Validator<SignInOtpCommand>
 
     public SignInOtpCommandValidator()
     {
-        RuleFor(x => x.Email)
-            .NotEmpty()
-            .EmailAddress();
+        RuleFor(x => x.UserUniqueKey)
+            .NotEmpty();
 
         RuleFor(x => x.Otp)
             .NotEmpty()

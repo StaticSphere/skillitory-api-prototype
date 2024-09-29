@@ -8,7 +8,6 @@ using FluentEmail.Core.Interfaces;
 using FluentEmail.MailKitSmtp;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Skillitory.Api.DataStore;
 using Skillitory.Api.DataStore.Entities.Auth;

@@ -10,6 +10,11 @@ public static class MiddlewareExtensions
         return builder.UseMiddleware<ExceptionLoggingMiddleware>();
     }
 
+    public static IApplicationBuilder UseAuthJtiValidation(this IApplicationBuilder builder)
+    {
+        return builder.UseMiddleware<AuthJtiValidationMiddleware>();
+    }
+
     public static IApplicationBuilder UseXmlHttpRequest(this IApplicationBuilder builder)
     {
         return builder.UseMiddleware<XmlHttpRequestMiddleware>();

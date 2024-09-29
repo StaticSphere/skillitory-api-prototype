@@ -23,6 +23,8 @@ public static class ApiRuntimeBootstrap
         app.UseAuthentication();
         app.UseAuthorization();
 
+        app.UseAuthJtiValidation();
+
         app.MapHealthChecks("/health");
 
         app.UseFastEndpoints(options =>

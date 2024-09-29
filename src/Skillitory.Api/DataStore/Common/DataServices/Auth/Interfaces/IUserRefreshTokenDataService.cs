@@ -6,6 +6,8 @@ public interface IUserRefreshTokenDataService
 {
     Task<UserRefreshToken?> GetCurrentUserRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken = default);
 
+    Task<bool> GetRefreshTokenWithJtiExistsAsync(string jti, CancellationToken cancellationToken = default);
+
     Task SaveNewUserRefreshTokenAsync(int userId, Guid jti, string refreshToken, DateTimeOffset refreshTokenExpiration,
         CancellationToken cancellationToken = default);
 

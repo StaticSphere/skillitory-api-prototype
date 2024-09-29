@@ -24,6 +24,13 @@ public class UserRefreshTokenDataService : IUserRefreshTokenDataService
             .FirstOrDefaultAsync(cancellationToken);
     }
 
+    public async Task<bool> GetRefreshTokenWithJtiExistsAsync(string jti, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.UserRefreshTokens
+            .Where(x => x.Jti == jti)
+            .AnyAsync(cancellationToken);
+    }
+
     public async Task SaveNewUserRefreshTokenAsync(int userId, Guid jti, string refreshToken, DateTimeOffset refreshTokenExpiration,
         CancellationToken cancellationToken = default)
     {

@@ -67,19 +67,6 @@ public static partial class ApiServicesBootstrap
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true
                 };
-
-                x.Events = new JwtBearerEvents
-                {
-                    OnMessageReceived = context =>
-                    {
-                        if (!context.Request.Cookies.TryGetValue(securitySettings.AccessCookieName, out var authCookie))
-                            return Task.CompletedTask;
-
-                        context.Token = authCookie;
-
-                        return Task.CompletedTask;
-                    }
-                };
             });
 
         services.AddAuthorization();
@@ -149,7 +136,6 @@ public static partial class ApiServicesBootstrap
         services.AddSwaggerGen();
 
         services.AddScoped<IPrincipalService, PrincipalService>();
-        //services.AddScoped<IAuthCommonService, AuthCommonService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddSingleton<IDateTimeService, DateTimeService>();
         services.AddScoped<IEmailService, EmailService>();

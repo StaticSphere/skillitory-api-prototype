@@ -15,6 +15,7 @@ public class SignInOtpEndpoint : Endpoint<SignInOtpCommand, Results<Unauthorized
     private readonly ISignInOtpDataService _signInOtpDataService;
     private readonly IUserRefreshTokenDataService _userRefreshTokenDataService;
     private readonly ITokenService _tokenService;
+    private readonly IDateTimeService _dateTimeService;
     private readonly IAuditService _auditService;
 
     public SignInOtpEndpoint(
@@ -22,12 +23,14 @@ public class SignInOtpEndpoint : Endpoint<SignInOtpCommand, Results<Unauthorized
         ISignInOtpDataService signInOtpDataService,
         IUserRefreshTokenDataService userRefreshTokenDataService,
         ITokenService tokenService,
+        IDateTimeService dateTimeService,
         IAuditService auditService)
     {
         _userManager = userManager;
         _signInOtpDataService = signInOtpDataService;
         _userRefreshTokenDataService = userRefreshTokenDataService;
         _tokenService = tokenService;
+        _dateTimeService = dateTimeService;
         _auditService = auditService;
     }
 
@@ -57,6 +60,9 @@ public class SignInOtpEndpoint : Endpoint<SignInOtpCommand, Results<Unauthorized
         await _userRefreshTokenDataService.SaveNewUserRefreshTokenAsync(user.Id, jti, tokens.RefreshToken, tokens.RefreshTokenExpiration, ct);
 
         await _auditService.AuditUserActionAsync(user.Id, AuditLogTypeEnum.SignIn, ct);
+
+        user.LastSignInDateTime = _dateTimeService.UtcNow;
+        await _userManager.UpdateAsync(user);
 
         return TypedResults.Ok((SignInOtpCommandResponse)tokens);
     }

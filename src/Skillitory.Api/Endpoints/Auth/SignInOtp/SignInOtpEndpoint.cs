@@ -64,6 +64,13 @@ public class SignInOtpEndpoint : Endpoint<SignInOtpCommand, Results<Unauthorized
         user.LastSignInDateTime = _dateTimeService.UtcNow;
         await _userManager.UpdateAsync(user);
 
-        return TypedResults.Ok((SignInOtpCommandResponse)tokens);
+        return TypedResults.Ok(new SignInOtpCommandResponse
+        {
+            UserUniqueKey = user.UserUniqueKey,
+            AccessToken = tokens.AccessToken,
+            RefreshToken = tokens.RefreshToken,
+            AccessTokenExpiration = tokens.AccessTokenExpiration,
+            RefreshTokenExpiration = tokens.RefreshTokenExpiration,
+        });
     }
 }

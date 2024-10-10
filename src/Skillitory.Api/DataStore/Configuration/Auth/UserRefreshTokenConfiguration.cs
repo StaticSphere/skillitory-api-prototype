@@ -1,9 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Skillitory.Api.DataStore.Entities.Auth;
 
 namespace Skillitory.Api.DataStore.Configuration.Auth;
 
+[ExcludeFromCodeCoverage]
 public class UserRefreshTokenConfiguration : IEntityTypeConfiguration<UserRefreshToken>
 {
     public void Configure(EntityTypeBuilder<UserRefreshToken> builder)

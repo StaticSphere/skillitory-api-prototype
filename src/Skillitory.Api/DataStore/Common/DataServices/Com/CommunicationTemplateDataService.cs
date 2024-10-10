@@ -1,9 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Skillitory.Api.DataStore.Common.DataServices.Com.Interfaces;
 using Skillitory.Api.DataStore.Entities.Com.Enumerations;
 
 namespace Skillitory.Api.DataStore.Common.DataServices.Com;
 
+[ExcludeFromCodeCoverage]
 public class CommunicationTemplateDataService : ICommunicationTemplateDataService
 {
     private readonly ISkillitoryDbContext _dbContext;

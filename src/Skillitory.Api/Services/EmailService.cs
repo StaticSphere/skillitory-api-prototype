@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Web;
 using FluentEmail.Core;
 using Fluid;
@@ -25,6 +26,7 @@ public class EmailService : IEmailService
         _configuration = configuration;
     }
 
+    [ExcludeFromCodeCoverage]
     public async Task SendEmailConfirmationEmailAsync(string email, string token,
         CancellationToken cancellationToken = default)
     {
@@ -34,12 +36,14 @@ public class EmailService : IEmailService
             new { callbackUrl }, cancellationToken);
     }
 
+    [ExcludeFromCodeCoverage]
     public async Task SendSignInOtpEmailAsync(string email, string otp, CancellationToken cancellationToken = default)
     {
         await SendEmailInternalAsync(email, "Skillitory - Sign In One Time Password", "SignInOtp", new { otp },
             cancellationToken);
     }
 
+    [ExcludeFromCodeCoverage]
     public async Task SendResetPasswordEmailAsync(string email, string token, CancellationToken cancellationToken = default)
     {
         var callbackUrl =
@@ -51,7 +55,7 @@ public class EmailService : IEmailService
     internal string UrlRoot =>
         _configuration["WebAppUrl"]!.Trim('/', '\\') + "/";
 
-    private async Task SendEmailInternalAsync(string email, string subject, string templateName, object? parameters,
+    internal async Task SendEmailInternalAsync(string email, string subject, string templateName, object? parameters,
         CancellationToken cancellationToken = default)
     {
         var template = await _communicationTemplateDataService.GetCommunicationTemplateAsync(templateName,

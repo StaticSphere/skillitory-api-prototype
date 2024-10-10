@@ -1,9 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Skillitory.Api.DataStore.Entities.Mbr;
 
 namespace Skillitory.Api.DataStore.Configuration.Mbr;
 
+[ExcludeFromCodeCoverage]
 public class MemberConfiguration : IEntityTypeConfiguration<Member>
 {
     public void Configure(EntityTypeBuilder<Member> builder)

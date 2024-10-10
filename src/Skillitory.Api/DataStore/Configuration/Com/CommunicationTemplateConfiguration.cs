@@ -1,9 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Skillitory.Api.DataStore.Entities.Com;
 
 namespace Skillitory.Api.DataStore.Configuration.Com;
 
+[ExcludeFromCodeCoverage]
 public class CommunicationTemplateConfiguration : IEntityTypeConfiguration<CommunicationTemplate>
 {
     public void Configure(EntityTypeBuilder<CommunicationTemplate> builder)

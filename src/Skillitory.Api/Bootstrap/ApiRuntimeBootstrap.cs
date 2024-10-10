@@ -1,9 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using FastEndpoints;
 using Skillitory.Api.Middleware;
 
 namespace Skillitory.Api.Bootstrap;
 
+[ExcludeFromCodeCoverage]
 public static class ApiRuntimeBootstrap
 {
     public static WebApplication UseApiRuntime(this WebApplication app, string corsPolicy)

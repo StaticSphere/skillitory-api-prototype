@@ -1,9 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Skillitory.Api.DataStore.Common.DataServices.Auth.Interfaces;
 using Skillitory.Api.DataStore.Entities.Auth;
 
 namespace Skillitory.Api.DataStore.Common.DataServices.Auth;
 
+[ExcludeFromCodeCoverage]
 public class UserDataService : IUserDataService
 {
     private readonly ISkillitoryDbContext _dbContext;

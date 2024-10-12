@@ -35,8 +35,7 @@ public class TokenService : ITokenService
         var roles = await _userManager.GetRolesAsync(user);
         var claims = new List<Claim>
         {
-            new(ClaimTypes.Name, user.UserName!),
-            new(ClaimTypes.NameIdentifier, user.UserUniqueKey),
+            new(JwtRegisteredClaimNames.Sub, user.UserUniqueKey),
             new(JwtRegisteredClaimNames.Jti, jti.ToString())
         };
         claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));

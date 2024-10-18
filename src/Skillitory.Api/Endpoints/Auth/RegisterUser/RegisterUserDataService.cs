@@ -1,8 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Skillitory.Api.DataStore;
 
 namespace Skillitory.Api.Endpoints.Auth.RegisterUser;
 
+[ExcludeFromCodeCoverage]
 public class RegisterUserDataService : IRegisterUserDataService
 {
     private readonly ISkillitoryDbContext _dbContext;

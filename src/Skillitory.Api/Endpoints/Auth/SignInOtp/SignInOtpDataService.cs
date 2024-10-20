@@ -1,9 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Skillitory.Api.DataStore;
 using Skillitory.Api.DataStore.Entities.Auth;
 
 namespace Skillitory.Api.Endpoints.Auth.SignInOtp;
 
+[ExcludeFromCodeCoverage]
 public class SignInOtpDataService : ISignInOtpDataService
 {
     private readonly ISkillitoryDbContext _dbContext;

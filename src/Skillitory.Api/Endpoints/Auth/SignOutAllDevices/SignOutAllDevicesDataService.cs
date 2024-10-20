@@ -1,8 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Skillitory.Api.DataStore;
 
 namespace Skillitory.Api.Endpoints.Auth.SignOutAllDevices;
 
+[ExcludeFromCodeCoverage]
 public class SignOutAllDevicesDataService : ISignOutAllDevicesDataService
 {
     private readonly ISkillitoryDbContext _dbContext;

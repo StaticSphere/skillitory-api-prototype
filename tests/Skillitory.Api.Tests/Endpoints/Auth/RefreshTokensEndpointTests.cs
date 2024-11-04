@@ -129,9 +129,9 @@ public class RefreshTokensEndpointTests
         var result = await _endpoint.ExecuteAsync(request, default);
 
         result.Should().NotBeNull();
-        result.Result.Should().BeOfType<Ok<RefreshTokensCommandResponse>>();
-        var value = result.Result.As<Ok<RefreshTokensCommandResponse>>().Value;
-        value.Should().BeEquivalentTo(new RefreshTokensCommandResponse
+        result.Result.Should().BeOfType<Ok<RefreshTokensCommandAppResponse>>();
+        var value = result.Result.As<Ok<RefreshTokensCommandAppResponse>>().Value;
+        value.Should().BeEquivalentTo(new RefreshTokensCommandAppResponse
         {
             RefreshToken = "789012", RefreshTokenExpiration = refreshTokenExpiration
         });

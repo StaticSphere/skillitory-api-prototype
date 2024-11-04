@@ -5,9 +5,13 @@ meta {
 }
 
 post {
-  url: {{protocol}}://{{apibase}}:{{port}}/v1/auth/sign-in
+  url: {{protocol}}://{{apibase}}:{{port}}/v1/auth/sign-in?isBrowser=true
   body: json
   auth: none
+}
+
+params:query {
+  isBrowser: true
 }
 
 body:json {

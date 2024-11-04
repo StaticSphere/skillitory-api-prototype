@@ -290,9 +290,9 @@ public class SignInOtpEndpointTests
         var result = await _endpoint.ExecuteAsync(request, default);
 
         result.Should().NotBeNull();
-        result.Result.Should().BeOfType<Ok<SignInOtpCommandResponse>>()
+        result.Result.Should().BeOfType<Ok<SignInOtpCommandAppResponse>>()
             .Which.Value.Should().NotBeNull()
-            .And.BeEquivalentTo(new SignInOtpCommandResponse
+            .And.BeEquivalentTo(new SignInOtpCommandAppResponse
             {
                 UserUniqueKey = "abc123",
                 AccessToken = "123",

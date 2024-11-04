@@ -5,18 +5,18 @@ meta {
 }
 
 post {
-  url: {{protocol}}://{{apibase}}:{{port}}/v1/auth/sign-in-otp
+  url: {{protocol}}://{{apibase}}:{{port}}/v1/auth/sign-in-otp?isBrowser=true
   body: json
   auth: none
 }
 
 params:query {
-  ~useCookie: true
+  isBrowser: true
 }
 
 body:json {
   {
-    "email": "{{adminEmail}}",
+    "userUniqueKey": "m8e9zevsht37afcyn3utoptc",
     "otp": "",
     "otpType": 1
   }

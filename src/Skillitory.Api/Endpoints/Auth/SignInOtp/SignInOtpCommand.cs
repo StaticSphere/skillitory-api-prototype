@@ -8,4 +8,5 @@ public record SignInOtpCommand
     public string Otp { get; init; } = "";
     public bool PersistedSignIn { get; init; }
     public OtpTypeEnum OtpType { get; init; }
+    public bool IsBrowser { get; init; }
 }

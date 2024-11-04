@@ -1,6 +1,6 @@
 namespace Skillitory.Api.Endpoints.Auth.SignIn;
 
-public record SignInCommandTokenResponse
+public record SignInCommandAppResponse
 {
     public string UserUniqueKey { get; init; } = "";
     public string AccessToken { get; init; } = "";

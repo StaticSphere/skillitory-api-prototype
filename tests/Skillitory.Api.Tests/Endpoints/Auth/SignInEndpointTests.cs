@@ -288,9 +288,9 @@ public class SignInEndpointTests
         var result = await _endpoint.ExecuteAsync(request, default);
 
         result.Should().NotBeNull();
-        result.Result.Should().BeOfType<Ok<SignInCommandTokenResponse>>()
+        result.Result.Should().BeOfType<Ok<SignInCommandAppResponse>>()
             .Which.Value.Should().NotBeNull()
-            .And.BeEquivalentTo(new SignInCommandTokenResponse
+            .And.BeEquivalentTo(new SignInCommandAppResponse
             {
                 UserUniqueKey = "abc123",
                 AccessToken = "123",

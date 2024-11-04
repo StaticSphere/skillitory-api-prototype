@@ -9,6 +9,8 @@ public class RefreshTokensCommandValidator : Validator<RefreshTokensCommand>
 {
     public RefreshTokensCommandValidator()
     {
-        RuleFor(x => x.RefreshToken).NotEmpty();
+        RuleFor(x => x.RefreshToken)
+            .NotEmpty()
+            .When(x => !x.IsBrowser);
     }
 }

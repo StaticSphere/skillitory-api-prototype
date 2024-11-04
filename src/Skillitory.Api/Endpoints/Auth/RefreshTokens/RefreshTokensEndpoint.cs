@@ -1,24 +1,36 @@
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.Extensions.Options;
 using Skillitory.Api.DataStore.Common.DataServices.Auth.Interfaces;
+using Skillitory.Api.Models.Configuration;
 using Skillitory.Api.Services.Interfaces;
 
 namespace Skillitory.Api.Endpoints.Auth.RefreshTokens;
 
-public class RefreshTokensEndpoint : Endpoint<RefreshTokensCommand, Results<UnauthorizedHttpResult, Ok<RefreshTokensCommandResponse>>>
+public class RefreshTokensEndpoint : Endpoint<RefreshTokensCommand, Results<
+    UnauthorizedHttpResult,
+    Ok<RefreshTokensCommandAppResponse>,
+    Ok<RefreshTokensCommandBrowserResponse>
+>>
 {
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IUserRefreshTokenDataService _userRefreshTokenDataService;
     private readonly IUserDataService _userDataService;
     private readonly ITokenService _tokenService;
+    private readonly SecurityConfiguration _securityConfiguration;
 
     public RefreshTokensEndpoint(
+        IHttpContextAccessor httpContextAccessor,
         IUserRefreshTokenDataService userRefreshTokenDataService,
         IUserDataService userDataService,
-        ITokenService tokenService)
+        ITokenService tokenService,
+        IOptions<SecurityConfiguration> securityConfiguration)
     {
+        _httpContextAccessor = httpContextAccessor;
         _userRefreshTokenDataService = userRefreshTokenDataService;
         _userDataService = userDataService;
         _tokenService = tokenService;
+        _securityConfiguration = securityConfiguration.Value;
     }
 
     public override void Configure()
@@ -27,10 +39,20 @@ public class RefreshTokensEndpoint : Endpoint<RefreshTokensCommand, Results<Unau
         AllowAnonymous();
     }
 
-    public override async Task<Results<UnauthorizedHttpResult, Ok<RefreshTokensCommandResponse>>> ExecuteAsync(RefreshTokensCommand req, CancellationToken ct)
+    public override async Task<Results<
+        UnauthorizedHttpResult,
+        Ok<RefreshTokensCommandAppResponse>,
+        Ok<RefreshTokensCommandBrowserResponse>
+    >> ExecuteAsync(RefreshTokensCommand req, CancellationToken ct)
     {
+        var refreshToken = req.RefreshToken;
+        if (req.IsBrowser)
+        {
+            refreshToken = _httpContextAccessor.HttpContext?.Request.Cookies[_securityConfiguration.RefreshCookieName] ?? string.Empty;
+        }
+
         var currentUserRefreshToken =
-            await _userRefreshTokenDataService.GetCurrentUserRefreshTokenAsync(req.RefreshToken, ct);
+            await _userRefreshTokenDataService.GetCurrentUserRefreshTokenAsync(refreshToken, ct);
 
         if (currentUserRefreshToken is null)
             return TypedResults.Unauthorized();
@@ -45,6 +67,24 @@ public class RefreshTokensEndpoint : Endpoint<RefreshTokensCommand, Results<Unau
         await _userRefreshTokenDataService.UpdateUserRefreshTokenAsync(currentUserRefreshToken, jti, tokens.RefreshToken,
             tokens.RefreshTokenExpiration, ct);
 
-        return TypedResults.Ok((RefreshTokensCommandResponse)tokens);
+        if (!req.IsBrowser)
+        {
+            return TypedResults.Ok((RefreshTokensCommandAppResponse)tokens);
+        }
+
+        _httpContextAccessor.HttpContext!.Response.Cookies.Append(
+            _securityConfiguration.RefreshCookieName,
+            tokens.RefreshToken,
+            new CookieOptions
+            {
+                Expires = tokens.RefreshTokenExpiration,
+                Domain = _securityConfiguration.AuthCookieDomain,
+                Path = "/",
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+            });
+
+        return TypedResults.Ok((RefreshTokensCommandBrowserResponse)tokens);
     }
 }

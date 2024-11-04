@@ -4,7 +4,7 @@ using Skillitory.Api.Models;
 
 namespace Skillitory.Api.Tests.Endpoints.Auth;
 
-public class RefreshTokensCommandResponseTests
+public class RefreshTokensCommandAppResponseTests
 {
     [Fact]
     public void MappingFromTokenData_Succeeds()
@@ -20,7 +20,7 @@ public class RefreshTokensCommandResponseTests
             RefreshTokenExpiration = refreshTokenExpiration
         };
 
-        var response = (RefreshTokensCommandResponse)tokenData;
+        var response = (RefreshTokensCommandAppResponse)tokenData;
 
         response.Should().BeEquivalentTo(tokenData);
     }

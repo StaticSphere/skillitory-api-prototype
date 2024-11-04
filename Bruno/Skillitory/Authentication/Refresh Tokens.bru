@@ -5,14 +5,13 @@ meta {
 }
 
 post {
-  url: {{protocol}}://{{apibase}}:{{port}}/v1/auth/refresh-tokens
+  url: {{protocol}}://{{apibase}}:{{port}}/v1/auth/refresh
   body: json
   auth: none
 }
 
 body:json {
   {
-    "accessToken": "",
     "refreshToken": ""
   }
 }

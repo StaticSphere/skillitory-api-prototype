@@ -1,16 +1,20 @@
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.Extensions.Options;
 using NSubstitute;
 using Skillitory.Api.DataStore.Common.DataServices.Auth.Interfaces;
 using Skillitory.Api.DataStore.Entities.Auth;
 using Skillitory.Api.Endpoints.Auth.RefreshTokens;
 using Skillitory.Api.Models;
+using Skillitory.Api.Models.Configuration;
 using Skillitory.Api.Services.Interfaces;
 
 namespace Skillitory.Api.Tests.Endpoints.Auth;
 
 public class RefreshTokensEndpointTests
 {
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IUserRefreshTokenDataService _userRefreshTokenDataService;
     private readonly IUserDataService _userDataService;
     private readonly ITokenService _tokenService;
@@ -18,12 +22,24 @@ public class RefreshTokensEndpointTests
 
     public RefreshTokensEndpointTests()
     {
+        _httpContextAccessor = Substitute.For<IHttpContextAccessor>();
         _userRefreshTokenDataService = Substitute.For<IUserRefreshTokenDataService>();
         _userDataService = Substitute.For<IUserDataService>();
         _tokenService = Substitute.For<ITokenService>();
+        var securityConfiguration = Substitute.For<IOptions<SecurityConfiguration>>();
 
-        _endpoint = new RefreshTokensEndpoint(_userRefreshTokenDataService,
-            _userDataService, _tokenService);
+        securityConfiguration.Value.Returns(new SecurityConfiguration
+        {
+            RefreshCookieName = "__refresh",
+            AuthCookieDomain = "https://www.test.com"
+        });
+
+        _endpoint = new RefreshTokensEndpoint(
+            _httpContextAccessor,
+            _userRefreshTokenDataService,
+            _userDataService,
+            _tokenService,
+            securityConfiguration);
     }
 
     [Fact]
@@ -33,7 +49,7 @@ public class RefreshTokensEndpointTests
 
         await _endpoint.ExecuteAsync(request, default);
 
-        _userRefreshTokenDataService.Received(1).GetCurrentUserRefreshTokenAsync("123456");
+        await _userRefreshTokenDataService.Received(1).GetCurrentUserRefreshTokenAsync("123456");
     }
 
     [Fact]
@@ -57,7 +73,7 @@ public class RefreshTokensEndpointTests
 
         await _endpoint.ExecuteAsync(request, default);
 
-        _userDataService.Received(1).GetUserByIdAsync(1);
+        await _userDataService.Received(1).GetUserByIdAsync(1);
     }
 
     [Fact]
@@ -84,12 +100,15 @@ public class RefreshTokensEndpointTests
         _userDataService.GetUserByIdAsync(1).Returns(user);
         _tokenService.GenerateAuthTokensAsync(user, Arg.Any<Guid>()).Returns(new TokenData
         {
-            RefreshToken = "789012", RefreshTokenExpiration = DateTime.Now.AddDays(7)
+            AccessToken = "123456",
+            RefreshToken = "789012",
+            AccessTokenExpiration = DateTime.Now.AddMinutes(3),
+            RefreshTokenExpiration = DateTime.Now.AddDays(7)
         });
 
         await _endpoint.ExecuteAsync(request, default);
 
-        _tokenService.Received(1).GenerateAuthTokensAsync(user, Arg.Any<Guid>());
+        await _tokenService.Received(1).GenerateAuthTokensAsync(user, Arg.Any<Guid>());
     }
 
     [Fact]
@@ -103,12 +122,15 @@ public class RefreshTokensEndpointTests
         _userDataService.GetUserByIdAsync(1).Returns(user);
         _tokenService.GenerateAuthTokensAsync(user, Arg.Any<Guid>()).Returns(new TokenData
         {
-            RefreshToken = "789012", RefreshTokenExpiration = refreshTokenExpiration
+            AccessToken = "123456",
+            RefreshToken = "789012",
+            AccessTokenExpiration = refreshTokenExpiration,
+            RefreshTokenExpiration = refreshTokenExpiration
         });
 
         await _endpoint.ExecuteAsync(request, default);
 
-        _userRefreshTokenDataService.Received(1).UpdateUserRefreshTokenAsync(userRefreshToken,
+        await _userRefreshTokenDataService.Received(1).UpdateUserRefreshTokenAsync(userRefreshToken,
             Arg.Any<Guid>(), "789012", refreshTokenExpiration);
     }
 
@@ -123,7 +145,10 @@ public class RefreshTokensEndpointTests
         _userDataService.GetUserByIdAsync(1).Returns(user);
         _tokenService.GenerateAuthTokensAsync(user, Arg.Any<Guid>()).Returns(new TokenData
         {
-            RefreshToken = "789012", RefreshTokenExpiration = refreshTokenExpiration
+            AccessToken = "123456",
+            RefreshToken = "789012",
+            AccessTokenExpiration = refreshTokenExpiration,
+            RefreshTokenExpiration = refreshTokenExpiration
         });
 
         var result = await _endpoint.ExecuteAsync(request, default);
@@ -133,7 +158,72 @@ public class RefreshTokensEndpointTests
         var value = result.Result.As<Ok<RefreshTokensCommandAppResponse>>().Value;
         value.Should().BeEquivalentTo(new RefreshTokensCommandAppResponse
         {
-            RefreshToken = "789012", RefreshTokenExpiration = refreshTokenExpiration
+            AccessToken = "123456",
+            RefreshToken = "789012",
+            AccessTokenExpiration = refreshTokenExpiration,
+            RefreshTokenExpiration = refreshTokenExpiration
+        });
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_SetsRefreshCookie_WhenIsBrowser()
+    {
+        var request = new RefreshTokensCommand { IsBrowser = true};
+        var userRefreshToken = new UserRefreshToken { UserId = 1 };
+        var user = new AuthUser { Id = 1 };
+        var refreshTokenExpiration = DateTime.Now.AddDays(7);
+        _httpContextAccessor.HttpContext?.Request.Cookies["__refresh"].Returns("123456");
+        _userRefreshTokenDataService.GetCurrentUserRefreshTokenAsync("123456").Returns(userRefreshToken);
+        _userDataService.GetUserByIdAsync(1).Returns(user);
+        _tokenService.GenerateAuthTokensAsync(user, Arg.Any<Guid>()).Returns(new TokenData
+        {
+            AccessToken = "123456",
+            RefreshToken = "789012",
+            AccessTokenExpiration = refreshTokenExpiration,
+            RefreshTokenExpiration = refreshTokenExpiration
+        });
+
+        await _endpoint.ExecuteAsync(request, default);
+
+        _httpContextAccessor.HttpContext?.Response.Cookies.Received(1).Append("__refresh",
+            "789012", Arg.Do<CookieOptions>(x => x.Should().BeEquivalentTo(new CookieOptions
+            {
+                Expires = refreshTokenExpiration,
+                Domain = "www.test.com",
+                Path = "/",
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict
+            })));
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_ReturnsOkWithAccessToken_WhenIsBrowser()
+    {
+        var request = new RefreshTokensCommand { IsBrowser = true};
+        var userRefreshToken = new UserRefreshToken { UserId = 1 };
+        var user = new AuthUser { Id = 1 };
+        var refreshTokenExpiration = DateTime.Now.AddDays(7);
+        _httpContextAccessor.HttpContext?.Request.Cookies["__refresh"].Returns("123456");
+        _userRefreshTokenDataService.GetCurrentUserRefreshTokenAsync("123456").Returns(userRefreshToken);
+        _userDataService.GetUserByIdAsync(1).Returns(user);
+        _tokenService.GenerateAuthTokensAsync(user, Arg.Any<Guid>()).Returns(new TokenData
+        {
+            AccessToken = "123456",
+            RefreshToken = "789012",
+            AccessTokenExpiration = refreshTokenExpiration,
+            RefreshTokenExpiration = refreshTokenExpiration
+        });
+
+        var result = await _endpoint.ExecuteAsync(request, default);
+
+        result.Should().NotBeNull();
+        result.Result.Should().BeOfType<Ok<RefreshTokensCommandBrowserResponse>>();
+        var value = result.Result.As<Ok<RefreshTokensCommandBrowserResponse>>().Value;
+        value.Should().BeEquivalentTo(new RefreshTokensCommandBrowserResponse
+        {
+            AccessToken = "123456",
+            AccessTokenExpiration = refreshTokenExpiration,
         });
     }
 }

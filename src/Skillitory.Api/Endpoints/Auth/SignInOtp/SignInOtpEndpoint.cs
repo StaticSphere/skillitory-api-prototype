@@ -24,6 +24,7 @@ public class SignInOtpEndpoint : Endpoint<SignInOtpCommand, Results<
     private readonly ITokenService _tokenService;
     private readonly IDateTimeService _dateTimeService;
     private readonly IAuditService _auditService;
+    private readonly bool _isDevelopment;
     private readonly SecurityConfiguration _securityConfiguration;
 
     public SignInOtpEndpoint(
@@ -34,6 +35,7 @@ public class SignInOtpEndpoint : Endpoint<SignInOtpCommand, Results<
         ITokenService tokenService,
         IDateTimeService dateTimeService,
         IAuditService auditService,
+        IHostEnvironment hostEnvironment,
         IOptions<SecurityConfiguration> securityConfiguration)
     {
         _userManager = userManager;
@@ -43,6 +45,7 @@ public class SignInOtpEndpoint : Endpoint<SignInOtpCommand, Results<
         _tokenService = tokenService;
         _dateTimeService = dateTimeService;
         _auditService = auditService;
+        _isDevelopment = hostEnvironment.IsDevelopment();
         _securityConfiguration = securityConfiguration.Value;
     }
 
@@ -98,11 +101,11 @@ public class SignInOtpEndpoint : Endpoint<SignInOtpCommand, Results<
             new CookieOptions
             {
                 Expires = tokens.RefreshTokenExpiration,
-                Domain = _securityConfiguration.AuthCookieDomain,
+                Domain = _isDevelopment ? null : _securityConfiguration.AuthCookieDomain,
                 Path = "/",
                 HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
+                Secure = !_isDevelopment,
+                SameSite = SameSiteMode.Lax,
             });
 
         return TypedResults.Ok(new SignInOtpCommandBrowserResponse

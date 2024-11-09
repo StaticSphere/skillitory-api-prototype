@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 using Skillitory.Api.DataStore.Common.DataServices.Auth.Interfaces;
@@ -26,7 +27,10 @@ public class RefreshTokensEndpointTests
         _userRefreshTokenDataService = Substitute.For<IUserRefreshTokenDataService>();
         _userDataService = Substitute.For<IUserDataService>();
         _tokenService = Substitute.For<ITokenService>();
+        var hostEnvironment = Substitute.For<IHostEnvironment>();
         var securityConfiguration = Substitute.For<IOptions<SecurityConfiguration>>();
+
+        hostEnvironment.EnvironmentName.Returns(Environments.Production);
 
         securityConfiguration.Value.Returns(new SecurityConfiguration
         {
@@ -39,7 +43,22 @@ public class RefreshTokensEndpointTests
             _userRefreshTokenDataService,
             _userDataService,
             _tokenService,
+            hostEnvironment,
             securityConfiguration);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    public async Task ExecuteAsync_ReturnsUnauthorized_WhenRefreshTokenEmpty(string refreshToken)
+    {
+        var request = new RefreshTokensCommand { RefreshToken = refreshToken };
+
+        var result = await _endpoint.ExecuteAsync(request, default);
+
+        result.Should().NotBeNull();
+        result.Result.Should().BeOfType<UnauthorizedHttpResult>();
     }
 
     [Fact]

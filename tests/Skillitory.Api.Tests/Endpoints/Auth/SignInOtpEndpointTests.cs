@@ -2,13 +2,13 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 using Skillitory.Api.DataStore.Common.DataServices.Auth.Interfaces;
 using Skillitory.Api.DataStore.Entities.Audit.Enumerations;
 using Skillitory.Api.DataStore.Entities.Auth;
 using Skillitory.Api.DataStore.Entities.Auth.Enumerations;
-using Skillitory.Api.Endpoints.Auth.SignIn;
 using Skillitory.Api.Endpoints.Auth.SignInOtp;
 using Skillitory.Api.Models;
 using Skillitory.Api.Models.Configuration;
@@ -26,7 +26,6 @@ public class SignInOtpEndpointTests
     private readonly IDateTimeService _dateTimeService;
     private readonly IAuditService _auditService;
     private readonly SignInOtpEndpoint _endpoint;
-    private readonly IOptions<SecurityConfiguration> _securityConfiguration;
 
     public SignInOtpEndpointTests()
     {
@@ -39,9 +38,12 @@ public class SignInOtpEndpointTests
         _tokenService = Substitute.For<ITokenService>();
         _dateTimeService = Substitute.For<IDateTimeService>();
         _auditService = Substitute.For<IAuditService>();
-        _securityConfiguration = Substitute.For<IOptions<SecurityConfiguration>>();
+        var hostEnvironment = Substitute.For<IHostEnvironment>();
+        var securityConfiguration = Substitute.For<IOptions<SecurityConfiguration>>();
 
-        _securityConfiguration.Value.Returns(new SecurityConfiguration
+        hostEnvironment.EnvironmentName.Returns(Environments.Production);
+
+        securityConfiguration.Value.Returns(new SecurityConfiguration
         {
             RefreshCookieName = "__refresh",
             AuthCookieDomain = "https://www.test.com"
@@ -55,7 +57,8 @@ public class SignInOtpEndpointTests
             _tokenService,
             _dateTimeService,
             _auditService,
-            _securityConfiguration);
+            hostEnvironment,
+            securityConfiguration);
     }
 
     [Fact]

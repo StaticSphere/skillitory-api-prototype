@@ -2,6 +2,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 using Skillitory.Api.DataStore.Common.DataServices.Auth.Interfaces;
@@ -25,7 +26,6 @@ public class SignInEndpointTests
     private readonly IDateTimeService _dateTimeService;
     private readonly IAuditService _auditService;
     private readonly SignInEndpoint _endpoint;
-    private readonly IOptions<SecurityConfiguration> _securityConfiguration;
 
     public SignInEndpointTests()
     {
@@ -38,9 +38,12 @@ public class SignInEndpointTests
         _emailService = Substitute.For<IEmailService>();
         _dateTimeService = Substitute.For<IDateTimeService>();
         _auditService = Substitute.For<IAuditService>();
-        _securityConfiguration = Substitute.For<IOptions<SecurityConfiguration>>();
+        var hostEnvironment = Substitute.For<IHostEnvironment>();
+        var securityConfiguration = Substitute.For<IOptions<SecurityConfiguration>>();
 
-        _securityConfiguration.Value.Returns(new SecurityConfiguration
+        hostEnvironment.EnvironmentName.Returns(Environments.Production);
+
+        securityConfiguration.Value.Returns(new SecurityConfiguration
         {
             RefreshCookieName = "__refresh",
             AuthCookieDomain = "https://www.test.com"
@@ -54,7 +57,8 @@ public class SignInEndpointTests
             _emailService,
             _dateTimeService,
             _auditService,
-            _securityConfiguration);
+            hostEnvironment,
+            securityConfiguration);
     }
 
     [Fact]
@@ -321,13 +325,6 @@ public class SignInEndpointTests
         var request = new SignInCommand { Email = "test@test.com", Password = "password", IsBrowser = true};
         var user = new AuthUser { Id = 1, UserUniqueKey = "abc123", Email = "test@test.com", IsSignInAllowed = true };
         var date = DateTimeOffset.UtcNow;
-        var tokenData = new TokenData
-        {
-            AccessToken = "123",
-            RefreshToken = "456",
-            AccessTokenExpiration = date,
-            RefreshTokenExpiration = date
-        };
         _userManager.FindByEmailAsync("test@test.com").Returns(user);
         _userManager.CheckPasswordAsync(user, "password").Returns(true);
         _tokenService.GenerateAuthTokensAsync(user, Arg.Any<Guid>()).Returns(new TokenData
@@ -359,13 +356,6 @@ public class SignInEndpointTests
         var request = new SignInCommand { Email = "test@test.com", Password = "password", IsBrowser = true};
         var user = new AuthUser { Id = 1, UserUniqueKey = "abc123", Email = "test@test.com", IsSignInAllowed = true };
         var date = DateTimeOffset.UtcNow;
-        var tokenData = new TokenData
-        {
-            AccessToken = "123",
-            RefreshToken = "456",
-            AccessTokenExpiration = date,
-            RefreshTokenExpiration = date
-        };
         _userManager.FindByEmailAsync("test@test.com").Returns(user);
         _userManager.CheckPasswordAsync(user, "password").Returns(true);
         _tokenService.GenerateAuthTokensAsync(user, Arg.Any<Guid>()).Returns(new TokenData

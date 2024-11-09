@@ -11,8 +11,6 @@ using Skillitory.Api.Services.Interfaces;
 
 namespace Skillitory.Api.Endpoints.Auth.SignIn;
 
-
-
 public class SignInEndpoint : Endpoint<SignInCommand, Results<
     UnauthorizedHttpResult,
     Ok<SignInCommandAppResponse>,
@@ -27,6 +25,7 @@ public class SignInEndpoint : Endpoint<SignInCommand, Results<
     private readonly IEmailService _emailService;
     private readonly IDateTimeService _dateTimeService;
     private readonly IAuditService _auditService;
+    private readonly bool _isDevelopment;
     private readonly SecurityConfiguration _securityConfiguration;
 
     public SignInEndpoint(
@@ -37,6 +36,7 @@ public class SignInEndpoint : Endpoint<SignInCommand, Results<
         IEmailService emailService,
         IDateTimeService dateTimeService,
         IAuditService auditService,
+        IHostEnvironment hostEnvironment,
         IOptions<SecurityConfiguration> securityConfiguration)
     {
         _userManager = userManager;
@@ -46,6 +46,7 @@ public class SignInEndpoint : Endpoint<SignInCommand, Results<
         _emailService = emailService;
         _dateTimeService = dateTimeService;
         _auditService = auditService;
+        _isDevelopment = hostEnvironment.IsDevelopment();
         _securityConfiguration = securityConfiguration.Value;
     }
 
@@ -108,11 +109,11 @@ public class SignInEndpoint : Endpoint<SignInCommand, Results<
             new CookieOptions
             {
                 Expires = tokens.RefreshTokenExpiration,
-                Domain = _securityConfiguration.AuthCookieDomain,
+                Domain = _isDevelopment ? null : _securityConfiguration.AuthCookieDomain,
                 Path = "/",
                 HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
+                Secure = !_isDevelopment,
+                SameSite = SameSiteMode.Lax,
             });
 
         return TypedResults.Ok(new SignInCommandBrowserResponse

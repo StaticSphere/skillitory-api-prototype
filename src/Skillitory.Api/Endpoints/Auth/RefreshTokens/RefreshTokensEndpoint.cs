@@ -17,6 +17,7 @@ public class RefreshTokensEndpoint : Endpoint<RefreshTokensCommand, Results<
     private readonly IUserRefreshTokenDataService _userRefreshTokenDataService;
     private readonly IUserDataService _userDataService;
     private readonly ITokenService _tokenService;
+    private readonly bool _isDevelopment;
     private readonly SecurityConfiguration _securityConfiguration;
 
     public RefreshTokensEndpoint(
@@ -24,12 +25,14 @@ public class RefreshTokensEndpoint : Endpoint<RefreshTokensCommand, Results<
         IUserRefreshTokenDataService userRefreshTokenDataService,
         IUserDataService userDataService,
         ITokenService tokenService,
+        IHostEnvironment hostEnvironment,
         IOptions<SecurityConfiguration> securityConfiguration)
     {
         _httpContextAccessor = httpContextAccessor;
         _userRefreshTokenDataService = userRefreshTokenDataService;
         _userDataService = userDataService;
         _tokenService = tokenService;
+        _isDevelopment = hostEnvironment.IsDevelopment();
         _securityConfiguration = securityConfiguration.Value;
     }
 
@@ -50,6 +53,9 @@ public class RefreshTokensEndpoint : Endpoint<RefreshTokensCommand, Results<
         {
             refreshToken = _httpContextAccessor.HttpContext?.Request.Cookies[_securityConfiguration.RefreshCookieName] ?? string.Empty;
         }
+
+        if (string.IsNullOrWhiteSpace(refreshToken))
+            return TypedResults.Unauthorized();
 
         var currentUserRefreshToken =
             await _userRefreshTokenDataService.GetCurrentUserRefreshTokenAsync(refreshToken, ct);
@@ -78,11 +84,11 @@ public class RefreshTokensEndpoint : Endpoint<RefreshTokensCommand, Results<
             new CookieOptions
             {
                 Expires = tokens.RefreshTokenExpiration,
-                Domain = _securityConfiguration.AuthCookieDomain,
+                Domain = _isDevelopment ? null : _securityConfiguration.AuthCookieDomain,
                 Path = "/",
                 HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
+                Secure = !_isDevelopment,
+                SameSite = SameSiteMode.Lax,
             });
 
         return TypedResults.Ok((RefreshTokensCommandBrowserResponse)tokens);

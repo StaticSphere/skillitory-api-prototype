@@ -11,44 +11,42 @@ namespace Skillitory.Api.Tests.Services;
 public class CookieServiceTests
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly IHostEnvironment _hostEnvironmentDev;
-    private readonly IHostEnvironment _hostEnvironmentProd;
     private readonly CookieService _serviceDev;
     private readonly CookieService _serviceProd;
 
     public CookieServiceTests()
     {
         _httpContextAccessor = Substitute.For<IHttpContextAccessor>();
-        _hostEnvironmentDev = Substitute.For<IHostEnvironment>();
-        _hostEnvironmentProd = Substitute.For<IHostEnvironment>();
+        var hostEnvironmentDev = Substitute.For<IHostEnvironment>();
+        var hostEnvironmentProd = Substitute.For<IHostEnvironment>();
         var securityConfiguration = Substitute.For<IOptions<SecurityConfiguration>>();
 
         securityConfiguration.Value.Returns(new SecurityConfiguration
         {
-            PersistSignInCookieName = "__persist",
+            PersistSignInCookieName = "__persisted",
             RefreshCookieName = "__refresh",
             AuthCookieDomain = "www.test.com"
         });
 
-        _hostEnvironmentDev.EnvironmentName.Returns(EnvironmentName.Development);
-        _hostEnvironmentProd.EnvironmentName.Returns(EnvironmentName.Production);
+        hostEnvironmentDev.EnvironmentName.Returns(Environments.Development);
+        hostEnvironmentProd.EnvironmentName.Returns(Environments.Production);
 
         _serviceDev = new CookieService(
             _httpContextAccessor,
             securityConfiguration,
-            _hostEnvironmentDev);
+            hostEnvironmentDev);
 
         _serviceProd = new CookieService(
             _httpContextAccessor,
             securityConfiguration,
-            _hostEnvironmentProd);
+            hostEnvironmentProd);
     }
 
     [Fact]
     public void SetRefreshTokenCookie_DoesNotSetExpiresIfNotPersistant()
     {
         CookieOptions? options = null;
-        _httpContextAccessor.HttpContext?.Request.Cookies["__persist"].Returns(string.Empty);
+        _httpContextAccessor.HttpContext?.Request.Cookies["__persisted"].Returns(string.Empty);
         _httpContextAccessor.HttpContext?.Response.Cookies.Append("__refresh",
             "789012", Arg.Do<CookieOptions>(x => options = x));
         var refreshTokenExpiration = DateTime.UtcNow.AddDays(7);
@@ -74,7 +72,7 @@ public class CookieServiceTests
     public void SetRefreshTokenCookie_SetsExpiresIfPersistant()
     {
         CookieOptions? options = null;
-        _httpContextAccessor.HttpContext?.Request.Cookies["__persist"].Returns("true");
+        _httpContextAccessor.HttpContext?.Request.Cookies["__persisted"].Returns("true");
         _httpContextAccessor.HttpContext?.Response.Cookies.Append("__refresh",
             "789012", Arg.Do<CookieOptions>(x => options = x));
         var refreshTokenExpiration = DateTime.UtcNow.AddDays(7);
@@ -100,7 +98,7 @@ public class CookieServiceTests
     public void SetRefreshTokenCookie_DoesNotSetDomainOrSecureIfInDevelopmentEnvironment()
     {
         CookieOptions? options = null;
-        _httpContextAccessor.HttpContext?.Request.Cookies["__persist"].Returns(string.Empty);
+        _httpContextAccessor.HttpContext?.Request.Cookies["__persisted"].Returns(string.Empty);
         _httpContextAccessor.HttpContext?.Response.Cookies.Append("__refresh",
             "789012", Arg.Do<CookieOptions>(x => options = x));
         var refreshTokenExpiration = DateTime.UtcNow.AddDays(7);

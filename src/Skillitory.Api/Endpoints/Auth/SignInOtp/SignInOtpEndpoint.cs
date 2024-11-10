@@ -1,12 +1,10 @@
 using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
 using Skillitory.Api.DataStore.Common.DataServices.Auth.Interfaces;
 using Skillitory.Api.DataStore.Entities.Audit.Enumerations;
 using Skillitory.Api.DataStore.Entities.Auth;
 using Skillitory.Api.DataStore.Entities.Auth.Enumerations;
-using Skillitory.Api.Models.Configuration;
 using Skillitory.Api.Services.Interfaces;
 
 namespace Skillitory.Api.Endpoints.Auth.SignInOtp;
@@ -18,35 +16,29 @@ public class SignInOtpEndpoint : Endpoint<SignInOtpCommand, Results<
 >>
 {
     private readonly UserManager<AuthUser> _userManager;
-    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ISignInOtpDataService _signInOtpDataService;
     private readonly IUserRefreshTokenDataService _userRefreshTokenDataService;
     private readonly ITokenService _tokenService;
     private readonly IDateTimeService _dateTimeService;
     private readonly IAuditService _auditService;
-    private readonly bool _isDevelopment;
-    private readonly SecurityConfiguration _securityConfiguration;
+    private readonly ICookieService _cookieService;
 
     public SignInOtpEndpoint(
         UserManager<AuthUser> userManager,
-        IHttpContextAccessor httpContextAccessor,
         ISignInOtpDataService signInOtpDataService,
         IUserRefreshTokenDataService userRefreshTokenDataService,
         ITokenService tokenService,
         IDateTimeService dateTimeService,
         IAuditService auditService,
-        IHostEnvironment hostEnvironment,
-        IOptions<SecurityConfiguration> securityConfiguration)
+        ICookieService cookieService)
     {
         _userManager = userManager;
-        _httpContextAccessor = httpContextAccessor;
         _signInOtpDataService = signInOtpDataService;
         _userRefreshTokenDataService = userRefreshTokenDataService;
         _tokenService = tokenService;
         _dateTimeService = dateTimeService;
         _auditService = auditService;
-        _isDevelopment = hostEnvironment.IsDevelopment();
-        _securityConfiguration = securityConfiguration.Value;
+        _cookieService = cookieService;
     }
 
     public override void Configure()
@@ -95,19 +87,7 @@ public class SignInOtpEndpoint : Endpoint<SignInOtpCommand, Results<
             });
         }
 
-        _httpContextAccessor.HttpContext!.Response.Cookies.Append(
-            _securityConfiguration.RefreshCookieName,
-            tokens.RefreshToken,
-            new CookieOptions
-            {
-                Expires = tokens.RefreshTokenExpiration,
-                Domain = _isDevelopment ? null : _securityConfiguration.AuthCookieDomain,
-                Path = "/",
-                HttpOnly = true,
-                Secure = !_isDevelopment,
-                SameSite = SameSiteMode.Lax,
-            });
-
+        _cookieService.SetRefreshTokenCookie(tokens.RefreshToken, tokens.RefreshTokenExpiration);
         return TypedResults.Ok(new SignInOtpCommandBrowserResponse
         {
             UserUniqueKey = user.UserUniqueKey,

@@ -37,7 +37,7 @@ public class ValidateUserEndpointTests
 
         await _endpoint.ExecuteAsync(request, default);
 
-        _userManager.Received(1).FindByEmailAsync("test@test.com");
+        await _userManager.Received(1).FindByEmailAsync("test@test.com");
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public class ValidateUserEndpointTests
 
         await _endpoint.ExecuteAsync(request, default);
 
-        _userManager.Received(1).ConfirmEmailAsync(user, "123456");
+        await _userManager.Received(1).ConfirmEmailAsync(user, "123456");
     }
 
     [Fact]

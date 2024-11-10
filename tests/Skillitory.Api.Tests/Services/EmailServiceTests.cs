@@ -1,4 +1,3 @@
-using System.Web;
 using FluentAssertions;
 using FluentEmail.Core;
 using Microsoft.Extensions.Configuration;
@@ -46,9 +45,9 @@ public class EmailServiceTests
     [Fact]
     public async Task SendEmailInternalAsync_GetsCommunicationTemplate()
     {
-        _emailService.SendEmailInternalAsync("test@test.com", "Test_Subject", "Test_Template", null);
+        await _emailService.SendEmailInternalAsync("test@test.com", "Test_Subject", "Test_Template", null);
 
-        _communicationTemplateDataService.Received(1)
+        await _communicationTemplateDataService.Received(1)
             .GetCommunicationTemplateAsync("Test_Template", CommunicationTemplateTypeEnum.Email);
     }
 
@@ -61,37 +60,37 @@ public class EmailServiceTests
 
         var action = () => _emailService.SendEmailInternalAsync("test@test.com", "Test_Subject", "Test_Template", null);
 
-        action.Should().ThrowAsync<EmailTemplateNotFoundException>()
+        await action.Should().ThrowAsync<EmailTemplateNotFoundException>()
             .Where(x => x.TemplateName == "Test_Template");
     }
 
     [Fact]
-    public void SendEmailInternalAsync_MailsParsedTemplateToCorrectEmail()
+    public async Task SendEmailInternalAsync_MailsParsedTemplateToCorrectEmail()
     {
         _communicationTemplateDataService
             .GetCommunicationTemplateAsync("Test_Template", CommunicationTemplateTypeEnum.Email)
             .Returns(TestTemplate);
 
-        _emailService.SendEmailInternalAsync("test@test.com", "Test_Subject", "Test_Template", new { Name = "Foobar" });
+        await _emailService.SendEmailInternalAsync("test@test.com", "Test_Subject", "Test_Template", new { Name = "Foobar" });
 
         _fluentEmail.Received(1).To("test@test.com");
     }
 
     [Fact]
-    public void SendEmailInternalAsync_MailsParsedTemplateWithCorrectSubject()
+    public async Task SendEmailInternalAsync_MailsParsedTemplateWithCorrectSubject()
     {
         _communicationTemplateDataService
             .GetCommunicationTemplateAsync("Test_Template", CommunicationTemplateTypeEnum.Email)
             .Returns(TestTemplate);
         _fluentEmail.To("test@test.com").Returns(_fluentEmail);
 
-        _emailService.SendEmailInternalAsync("test@test.com", "Test_Subject", "Test_Template", new { Name = "Foobar" });
+        await _emailService.SendEmailInternalAsync("test@test.com", "Test_Subject", "Test_Template", new { Name = "Foobar" });
 
         _fluentEmail.Received(1).Subject("Test_Subject");
     }
 
     [Fact]
-    public void SendEmailInternalAsync_MailsParsedTemplateWithCorrectBody()
+    public async Task SendEmailInternalAsync_MailsParsedTemplateWithCorrectBody()
     {
         _communicationTemplateDataService
             .GetCommunicationTemplateAsync("Test_Template", CommunicationTemplateTypeEnum.Email)
@@ -99,7 +98,7 @@ public class EmailServiceTests
         _fluentEmail.To("test@test.com").Returns(_fluentEmail);
         _fluentEmail.Subject("Test_Subject").Returns(_fluentEmail);
 
-        _emailService.SendEmailInternalAsync("test@test.com", "Test_Subject", "Test_Template", new { name = "Foobar" });
+        await _emailService.SendEmailInternalAsync("test@test.com", "Test_Subject", "Test_Template", new { name = "Foobar" });
 
         _fluentEmail.Received(1).Body("<p>Foobar</p>", true);
     }
@@ -115,7 +114,7 @@ public class EmailServiceTests
         _fluentEmail.Subject("Test_Subject").Returns(_fluentEmail);
         _fluentEmail.Body("<p>Foobar</p>", true).Returns(_fluentEmail);
 
-        _emailService.SendEmailInternalAsync("test@test.com", "Test_Subject", "Test_Template", new { name = "Foobar" });
+        await _emailService.SendEmailInternalAsync("test@test.com", "Test_Subject", "Test_Template", new { name = "Foobar" });
 
         await _fluentEmail.Received(1).SendAsync(cancellationToken);
     }
@@ -130,7 +129,7 @@ public class EmailServiceTests
 
         var action = () => _emailService.SendEmailInternalAsync("test@test.com", "Test_Subject", "Test_Template", new { name = "Foobar" }, cancellationToken);
 
-        action.Should().ThrowAsync<EmailTemplateRenderException>()
+        await action.Should().ThrowAsync<EmailTemplateRenderException>()
             .Where(x => x.TemplateName == "Test_Template");
     }
 }

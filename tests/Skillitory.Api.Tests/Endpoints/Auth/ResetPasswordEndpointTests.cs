@@ -1,10 +1,7 @@
 using FluentAssertions;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.Data;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
-using NSubstitute.ReceivedExtensions;
 using Skillitory.Api.DataStore.Entities.Audit.Enumerations;
 using Skillitory.Api.DataStore.Entities.Auth;
 using Skillitory.Api.Endpoints.Auth.ResetPassword;

@@ -23,7 +23,7 @@ public class SignOutEndpointTests
         var request = new SignOutCommand { RefreshToken = "123456" };
         await _endpoint.ExecuteAsync(request, default);
 
-        _userRefreshTokenDataService.Received(1).DeleteUserRefreshTokenAsync("123456");
+        await _userRefreshTokenDataService.Received(1).DeleteUserRefreshTokenAsync("123456");
     }
 
     [Fact]

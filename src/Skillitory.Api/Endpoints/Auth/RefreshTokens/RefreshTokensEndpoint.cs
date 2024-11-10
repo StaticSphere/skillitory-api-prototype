@@ -17,7 +17,7 @@ public class RefreshTokensEndpoint : Endpoint<RefreshTokensCommand, Results<
     private readonly IUserRefreshTokenDataService _userRefreshTokenDataService;
     private readonly IUserDataService _userDataService;
     private readonly ITokenService _tokenService;
-    private readonly bool _isDevelopment;
+    private readonly ICookieService _cookieService;
     private readonly SecurityConfiguration _securityConfiguration;
 
     public RefreshTokensEndpoint(
@@ -25,14 +25,14 @@ public class RefreshTokensEndpoint : Endpoint<RefreshTokensCommand, Results<
         IUserRefreshTokenDataService userRefreshTokenDataService,
         IUserDataService userDataService,
         ITokenService tokenService,
-        IHostEnvironment hostEnvironment,
+        ICookieService cookieService,
         IOptions<SecurityConfiguration> securityConfiguration)
     {
         _httpContextAccessor = httpContextAccessor;
         _userRefreshTokenDataService = userRefreshTokenDataService;
         _userDataService = userDataService;
         _tokenService = tokenService;
-        _isDevelopment = hostEnvironment.IsDevelopment();
+        _cookieService = cookieService;
         _securityConfiguration = securityConfiguration.Value;
     }
 
@@ -78,18 +78,7 @@ public class RefreshTokensEndpoint : Endpoint<RefreshTokensCommand, Results<
             return TypedResults.Ok((RefreshTokensCommandAppResponse)tokens);
         }
 
-        _httpContextAccessor.HttpContext!.Response.Cookies.Append(
-            _securityConfiguration.RefreshCookieName,
-            tokens.RefreshToken,
-            new CookieOptions
-            {
-                Expires = tokens.RefreshTokenExpiration,
-                Domain = _isDevelopment ? null : _securityConfiguration.AuthCookieDomain,
-                Path = "/",
-                HttpOnly = true,
-                Secure = !_isDevelopment,
-                SameSite = SameSiteMode.Lax,
-            });
+        _cookieService.SetRefreshTokenCookie(tokens.RefreshToken, tokens.RefreshTokenExpiration);
 
         return TypedResults.Ok((RefreshTokensCommandBrowserResponse)tokens);
     }

@@ -82,7 +82,7 @@ public class ForgotPasswordEndpointTests
 
         await _endpoint.ExecuteAsync(request, default);
 
-        _userManager.Received(1).GeneratePasswordResetTokenAsync(_user);
+        await _userManager.Received(1).GeneratePasswordResetTokenAsync(_user);
     }
 
     [Fact]
@@ -94,7 +94,7 @@ public class ForgotPasswordEndpointTests
 
         await _endpoint.ExecuteAsync(request, default);
 
-        _emailService.Received(1).SendResetPasswordEmailAsync("test@test.com", "123456");
+        await _emailService.Received(1).SendResetPasswordEmailAsync("test@test.com", "123456");
     }
 
     [Fact]
@@ -106,7 +106,7 @@ public class ForgotPasswordEndpointTests
 
         await _endpoint.ExecuteAsync(request, default);
 
-        _auditService.Received(1).AuditUserActionAsync(1, AuditLogTypeEnum.ForgotPassword);
+        await _auditService.Received(1).AuditUserActionAsync(1, AuditLogTypeEnum.ForgotPassword);
     }
 
     [Fact]

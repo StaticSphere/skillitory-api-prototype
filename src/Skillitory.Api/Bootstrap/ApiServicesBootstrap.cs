@@ -142,6 +142,7 @@ public static partial class ApiServicesBootstrap
         services.AddSingleton<IDateTimeService, DateTimeService>();
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IAuditService, AuditService>();
+        services.AddScoped<ICookieService, CookieService>();
         services.AddScoped(typeof(ILoggerService<>), typeof(LoggerService<>));
 
         services.AddFastEndpoints();

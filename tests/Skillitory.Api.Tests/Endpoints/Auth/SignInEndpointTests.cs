@@ -1,5 +1,4 @@
 using FluentAssertions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Hosting;
@@ -19,12 +18,12 @@ namespace Skillitory.Api.Tests.Endpoints.Auth;
 public class SignInEndpointTests
 {
     private readonly UserManager<AuthUser> _userManager;
-    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IUserRefreshTokenDataService _userRefreshTokenDataService;
     private readonly ITokenService _tokenService;
     private readonly IEmailService _emailService;
     private readonly IDateTimeService _dateTimeService;
     private readonly IAuditService _auditService;
+    private readonly ICookieService _cookieService;
     private readonly SignInEndpoint _endpoint;
 
     public SignInEndpointTests()
@@ -32,12 +31,12 @@ public class SignInEndpointTests
         var store = Substitute.For<IUserStore<AuthUser>>();
         _userManager =
             Substitute.For<UserManager<AuthUser>>(store, null, null, null, null, null, null, null, null);
-        _httpContextAccessor = Substitute.For<IHttpContextAccessor>();
         _userRefreshTokenDataService = Substitute.For<IUserRefreshTokenDataService>();
         _tokenService = Substitute.For<ITokenService>();
         _emailService = Substitute.For<IEmailService>();
         _dateTimeService = Substitute.For<IDateTimeService>();
         _auditService = Substitute.For<IAuditService>();
+        _cookieService = Substitute.For<ICookieService>();
         var hostEnvironment = Substitute.For<IHostEnvironment>();
         var securityConfiguration = Substitute.For<IOptions<SecurityConfiguration>>();
 
@@ -51,14 +50,12 @@ public class SignInEndpointTests
 
         _endpoint = new SignInEndpoint(
             _userManager,
-            _httpContextAccessor,
             _userRefreshTokenDataService,
             _tokenService,
             _emailService,
             _dateTimeService,
             _auditService,
-            hostEnvironment,
-            securityConfiguration);
+            _cookieService);
     }
 
     [Fact]
@@ -338,16 +335,7 @@ public class SignInEndpointTests
 
         await _endpoint.ExecuteAsync(request, default);
 
-        _httpContextAccessor.HttpContext?.Response.Cookies.Received(1).Append("__refresh",
-            "789012", Arg.Do<CookieOptions>(x => x.Should().BeEquivalentTo(new CookieOptions
-            {
-                Expires = date,
-                Domain = "www.test.com",
-                Path = "/",
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict
-            })));
+        _cookieService.Received(1).SetRefreshTokenCookie("789012", date);
     }
 
     [Fact]

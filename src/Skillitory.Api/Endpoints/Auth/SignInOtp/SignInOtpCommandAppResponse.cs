@@ -1,5 +1,3 @@
-using Skillitory.Api.Models;
-
 namespace Skillitory.Api.Endpoints.Auth.SignInOtp;
 
 public record SignInOtpCommandAppResponse

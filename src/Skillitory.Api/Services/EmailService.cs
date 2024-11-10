@@ -67,7 +67,7 @@ public class EmailService : IEmailService
         string renderedMessage = "";
         if (Parser.TryParse(template, out var parsedTemplate, out var error))
         {
-            var context = new TemplateContext(parameters);
+            var context = new TemplateContext(parameters ?? new {});
             renderedMessage = await parsedTemplate.RenderAsync(context);
         }
         else

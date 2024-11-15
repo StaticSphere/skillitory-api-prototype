@@ -135,7 +135,7 @@ public static partial class ApiServicesBootstrap
             .AddDbContextCheck<SkillitoryDbContext>();
 
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
+        services.AddOpenApi();
 
         services.AddScoped<IPrincipalService, PrincipalService>();
         services.AddScoped<ITokenService, TokenService>();

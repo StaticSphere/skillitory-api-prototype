@@ -39,4 +39,15 @@ public class CookieService : ICookieService
                 SameSite = SameSiteMode.Lax,
             });
     }
+
+    public void ClearRefreshTokenCookie()
+    {
+        _httpContextAccessor.HttpContext?.Response.Cookies.Append(
+            _securityConfiguration.RefreshCookieName,
+            "",
+            new CookieOptions
+            {
+                Expires = DateTime.Now.AddDays(-1),
+            });
+    }
 }

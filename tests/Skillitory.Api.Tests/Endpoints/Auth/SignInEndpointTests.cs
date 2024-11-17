@@ -2,7 +2,6 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using NSubstitute;
 using Skillitory.Api.DataStore.Common.DataServices.Auth.Interfaces;
 using Skillitory.Api.DataStore.Entities.Audit.Enumerations;
@@ -10,7 +9,6 @@ using Skillitory.Api.DataStore.Entities.Auth;
 using Skillitory.Api.DataStore.Entities.Auth.Enumerations;
 using Skillitory.Api.Endpoints.Auth.SignIn;
 using Skillitory.Api.Models;
-using Skillitory.Api.Models.Configuration;
 using Skillitory.Api.Services.Interfaces;
 
 namespace Skillitory.Api.Tests.Endpoints.Auth;
@@ -38,15 +36,8 @@ public class SignInEndpointTests
         _auditService = Substitute.For<IAuditService>();
         _cookieService = Substitute.For<ICookieService>();
         var hostEnvironment = Substitute.For<IHostEnvironment>();
-        var securityConfiguration = Substitute.For<IOptions<SecurityConfiguration>>();
 
         hostEnvironment.EnvironmentName.Returns(Environments.Production);
-
-        securityConfiguration.Value.Returns(new SecurityConfiguration
-        {
-            RefreshCookieName = "__refresh",
-            AuthCookieDomain = "https://www.test.com"
-        });
 
         _endpoint = new SignInEndpoint(
             _userManager,
